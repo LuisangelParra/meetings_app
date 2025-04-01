@@ -11,6 +11,7 @@ class LColors {
   // Another accent colors
   static const Color accent2 = Color(0xFF2D2A55);
   static const Color accent3 = Color(0xFF1B1F3B);
+  static const Color accent4 = Color.fromARGB(255, 119, 112, 253);
 
   // Background Colors
   static const Color light = Color(0xFFFFFFFF);
