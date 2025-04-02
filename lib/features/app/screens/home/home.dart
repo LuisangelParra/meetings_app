@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/search_container.dart';
-import 'package:meetings_app/common/widgets/events/location/event_location.dart';
 import 'package:meetings_app/common/widgets/texts/section_heading.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_carousel.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
