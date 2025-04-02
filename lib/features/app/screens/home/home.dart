@@ -8,14 +8,16 @@ import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_appbar.dart';
 import 'package:meetings_app/utils/constants/text_strings.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/running_events_list.dart';
+import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final dark = LHelperFunctions.isDarkMode(context);
     return Scaffold(
-      backgroundColor: LColors.light.withValues(alpha: 0.95),
+      backgroundColor: dark ? LColors.dark.withValues(alpha: 0.95) : LColors.light.withValues(alpha: 0.95),
       body: SingleChildScrollView(
           child: Stack(
         children: [
@@ -49,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: LSizes.spaceBtwSections),
+              SizedBox(height: LSizes.spaceBtwSections/2),
 
               // Popular events list
               Padding(
@@ -60,14 +62,14 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     LSectionHeading(
                       title: "Popular Events",
-                      textColor: LColors.dark,
+                      textColor: dark ? LColors.textWhite : LColors.dark,
                     ),
                     SizedBox(height: LSizes.spaceBtwItems),
                     LEventCarousel(),
                   ],
                 ),
               ),
-              SizedBox(height: LSizes.spaceBtwSections),
+              SizedBox(height: LSizes.spaceBtwSections/2),
 
               // Running events list
               Padding(
@@ -78,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     LSectionHeading(
                       title: "Running Events",
-                      textColor: LColors.dark,
+                      textColor: dark ? LColors.textWhite : LColors.dark,
                     ),
                     SizedBox(height: LSizes.spaceBtwItems),
                     // Replace the single event container with the RunningEventsList widget

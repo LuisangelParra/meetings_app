@@ -26,7 +26,7 @@ class LSearchContainer extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: dark ? LColors.dark : LColors.white,
+        color: dark ? LColors.accent2 : LColors.white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
