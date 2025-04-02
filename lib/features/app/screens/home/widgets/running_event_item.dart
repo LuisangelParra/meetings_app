@@ -4,6 +4,7 @@ import 'package:meetings_app/common/widgets/events/location/event_location.dart'
 import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
+import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class RunningEventItem extends StatelessWidget {
   final EventModel event;
@@ -15,12 +16,13 @@ class RunningEventItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = LHelperFunctions.isDarkMode(context);
     return Container(
       width: double.infinity,
       height: 120,
       margin: const EdgeInsets.only(bottom: LSizes.spaceBtwItems),
       decoration: BoxDecoration(
-        color: LColors.white,
+        color: dark ? LColors.accent2 : LColors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
@@ -45,7 +47,8 @@ class RunningEventItem extends StatelessWidget {
                   Text(
                     event.title,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: LColors.dark,
+                          fontSize: 16,
+                          color: dark ? LColors.textWhite : LColors.dark,
                         ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

@@ -5,6 +5,7 @@ import 'package:meetings_app/common/widgets/events/location/event_location.dart'
 
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
+import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class LEventVerticalCard extends StatelessWidget {
   const LEventVerticalCard({
@@ -24,15 +25,16 @@ class LEventVerticalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = LHelperFunctions.isDarkMode(context);
     int maxVisible = 4;
     bool showCounter = attendees.length > maxVisible;
     int remainingCount = attendees.length - maxVisible;
     return Container(
-      height: 325,
+      height: 315,
       width: 240,
       decoration: 
         BoxDecoration(
-          color: LColors.white,
+          color: dark ? LColors.accent2 : LColors.white,
           borderRadius: BorderRadius.circular(18),
         ),
       child: Column(
@@ -63,12 +65,13 @@ class LEventVerticalCard extends StatelessWidget {
                   ),
                   const SizedBox(height: LSizes.sm/2),
                   Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: LColors.dark,
+                      fontSize: 16,
+                      color: dark ? LColors.textWhite : LColors.dark,
                     ),
                   ),
                   const SizedBox(height: LSizes.sm/2),
                   LEventLocation(location: location),
-                  const SizedBox(height: LSizes.sm*2),
+                  const SizedBox(height: LSizes.sm),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
