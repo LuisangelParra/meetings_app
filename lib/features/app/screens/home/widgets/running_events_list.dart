@@ -8,8 +8,8 @@ class RunningEventsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Sample data for running events
-    final List<EventModel> runningEvents = [
-      EventModel(
+    final List<Event> runningEvents = [
+      Event(
         id: '1',
         title: 'Tech Conference 2023',
         imageUrl: 'assets/images/event.jpg',
@@ -19,7 +19,7 @@ class RunningEventsList extends StatelessWidget {
         date: DateTime.now(),
         isRunning: true,
       ),
-      EventModel(
+      Event(
         id: '2',
         title: 'Music Festival Weekend',
         imageUrl: 'assets/images/event.jpg',
@@ -29,7 +29,7 @@ class RunningEventsList extends StatelessWidget {
         date: DateTime.now(),
         isRunning: true,
       ),
-      EventModel(
+      Event(
         id: '3',
         title: 'Startup Pitch Competition',
         imageUrl: 'assets/images/event.jpg',
@@ -39,7 +39,7 @@ class RunningEventsList extends StatelessWidget {
         date: DateTime.now(),
         isRunning: true,
       ),
-      EventModel(
+      Event(
         id: '4',
         title: 'Art Exhibition Opening',
         imageUrl: 'assets/images/event.jpg',
@@ -49,7 +49,7 @@ class RunningEventsList extends StatelessWidget {
         date: DateTime.now(),
         isRunning: true,
       ),
-      EventModel(
+      Event(
         id: '5',
         title: 'Networking Mixer',
         imageUrl: 'assets/images/event.jpg',

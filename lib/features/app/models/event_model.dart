@@ -1,6 +1,7 @@
-class EventModel {
+class Event {
   final String id;
   final String title;
+  final String description;
   final String imageUrl;
   final String location;
   final int views;
@@ -8,9 +9,11 @@ class EventModel {
   final DateTime date;
   final bool isRunning;
 
-  EventModel({
+
+  Event({
     required this.id,
     required this.title,
+    this.description = '',
     required this.imageUrl,
     required this.location,
     required this.views,

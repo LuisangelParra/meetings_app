@@ -28,12 +28,18 @@ class LAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         automaticallyImplyLeading: false,
         leading: showBackArrow
-            ? IconButton(
-                onPressed: () => Get.back(),
-                icon: Icon(
-                  Iconsax.arrow_left,
-                  color: LColors.white,
-                ))
+            ? Container(
+              decoration: BoxDecoration(
+                color: LColors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Icon(
+                    Iconsax.arrow_left,
+                    color: LColors.dark,
+                  )),
+            )
             : leadingIcon != null
                 ? IconButton(
                     onPressed: leadingOnPressed, icon: Icon(leadingIcon, color: Colors.white))

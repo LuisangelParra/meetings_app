@@ -7,7 +7,7 @@ import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class RunningEventItem extends StatelessWidget {
-  final EventModel event;
+  final Event event;
 
   const RunningEventItem({
     Key? key,
