@@ -1,23 +1,21 @@
-class Event {
-  final String imagePath;
+class EventModel {
+  final String id;
   final String title;
-  final String description;
-  final String date;
-  final String time;
+  final String imageUrl;
   final String location;
-  final String organizer;
-  final List<String> attendees;
-  final String eventType;
+  final int views;
+  final int likes;
+  final DateTime date;
+  final bool isRunning;
 
-  Event({
-    required this.imagePath,
+  EventModel({
+    required this.id,
     required this.title,
-    required this.description,
-    required this.date,
-    required this.time,
+    required this.imageUrl,
     required this.location,
-    required this.organizer,
-    required this.attendees,
-    required this.eventType,
+    required this.views,
+    required this.likes,
+    required this.date,
+    this.isRunning = false,
   });
 }
