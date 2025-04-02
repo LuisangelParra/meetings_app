@@ -64,7 +64,6 @@ class HomeScreen extends StatelessWidget {
                       title: "Popular Events",
                       textColor: dark ? LColors.textWhite : LColors.dark,
                     ),
-                    SizedBox(height: LSizes.spaceBtwItems),
                     LEventCarousel(),
                   ],
                 ),
