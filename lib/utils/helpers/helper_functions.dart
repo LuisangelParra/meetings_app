@@ -62,6 +62,20 @@ class LHelperFunctions {
         });
   }
 
+  static String formatDate(DateTime date) {
+    // Crea el formateador con el patrón y la localización en español
+    final DateFormat formatter = DateFormat("EEEE, MMMM d, yyyy", 'es_ES');
+    String formatted = formatter.format(date);
+
+    // Opcional: capitaliza la primera letra de cada palabra
+    formatted = formatted
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+
+    return formatted;
+  }
+
   static void navigateToScreen(BuildContext context, Widget screen) {
     Navigator.push(
       context,

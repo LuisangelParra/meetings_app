@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/search_container.dart';
 import 'package:meetings_app/common/widgets/texts/section_heading.dart';
+import 'package:meetings_app/features/app/all_events/all_events.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_carousel.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/primary_header_container.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_appbar.dart';
 import 'package:meetings_app/utils/constants/text_strings.dart';
-import 'package:meetings_app/features/app/screens/home/widgets/running_events_list.dart';
+import 'package:meetings_app/common/widgets/events/lists/live_events_list.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -63,6 +64,12 @@ class HomeScreen extends StatelessWidget {
                     LSectionHeading(
                       title: "Popular Events",
                       textColor: dark ? LColors.textWhite : LColors.dark,
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AllEventsScreen()), // Ir a otra página
+                        );
+                      },
                     ),
                     LEventCarousel(),
                   ],
@@ -80,10 +87,16 @@ class HomeScreen extends StatelessWidget {
                     LSectionHeading(
                       title: "Running Events",
                       textColor: dark ? LColors.textWhite : LColors.dark,
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AllEventsScreen()), // Ir a otra página
+                        );
+                      },
                     ),
                     SizedBox(height: LSizes.spaceBtwItems),
                     // Replace the single event container with the RunningEventsList widget
-                    RunningEventsList(),
+                    LLiveEventList(),
                   ],
                 ),
               ),
