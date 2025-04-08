@@ -6,13 +6,13 @@ import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
-class RunningEventItem extends StatelessWidget {
-  final EventModel event;
+class LiveEventHorizontalCard extends StatelessWidget {
+  final Event event;
 
-  const RunningEventItem({
-    Key? key,
+  const LiveEventHorizontalCard({
+    super.key,
     required this.event,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

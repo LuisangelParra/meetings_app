@@ -5,6 +5,7 @@ class LSectionHeading extends StatelessWidget {
     super.key,
     this.textColor,
     this.showActionButton = true,
+    this.isDetailTitle = false,
     required this.title,
     this.buttonTitle = "See all",
     this.onPressed,
@@ -12,6 +13,7 @@ class LSectionHeading extends StatelessWidget {
 
   final Color? textColor;
   final bool showActionButton;
+  final bool isDetailTitle;
   final String title, buttonTitle;
   final void Function()? onPressed;
 
@@ -21,10 +23,9 @@ class LSectionHeading extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title,
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .apply(color: textColor),
+            style: isDetailTitle
+                ? Theme.of(context).textTheme.headlineLarge!.apply(color: textColor)
+                : Theme.of(context).textTheme.headlineSmall!.apply(color: textColor),
             maxLines: 1,
             overflow: TextOverflow.ellipsis),
         if (showActionButton)

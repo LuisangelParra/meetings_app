@@ -11,6 +11,7 @@ class LSearchContainer extends StatelessWidget {
     this.icon = Iconsax.search_favorite,
     this.postIcon = Iconsax.filter,
     this.onTap,
+    this.isPostIcon = true,
     this.padding = const EdgeInsets.all(LSizes.sm),
   });
 
@@ -19,6 +20,7 @@ class LSearchContainer extends StatelessWidget {
   final IconData? icon, postIcon;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
+  final bool isPostIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class LSearchContainer extends StatelessWidget {
           focusedBorder: InputBorder.none, 
           disabledBorder: InputBorder.none, 
           prefixIcon: Icon(icon, color: LColors.darkGrey),
-          suffixIcon: Icon(postIcon, color: LColors.primary)
+          suffixIcon: isPostIcon ? Icon(postIcon, color: LColors.primary) : null,
         ),
       ),
     );
