@@ -12,6 +12,7 @@ class Event {
   final String horaFin;
   final int maxParticipantes; // Número máximo de participantes
   final int suscritos;        // Contador de suscripciones
+  final String imageUrl;     // URL de la imagen del evento (opcional)
 
   Event({
     required this.id,
@@ -27,6 +28,7 @@ class Event {
     required this.horaFin,
     required this.maxParticipantes,
     required this.suscritos,
+    this.imageUrl = 'assets/images/event.jpg', // Valor por defecto para la imagen
   });
 
   /// Crea una instancia de Event a partir de un mapa (por ejemplo, recibido de un JSON)
@@ -47,6 +49,7 @@ class Event {
       horaFin: json['hora_fin'] ?? '',
       maxParticipantes: json['max_participantes'] ?? 0,
       suscritos: json['suscritos'] ?? 0,
+      imageUrl: json['imageUrl'] ?? 'assets/images/event.jpg', // URL de la imagen
     );
   }
 
@@ -66,6 +69,7 @@ class Event {
       'hora_fin': horaFin,
       'max_participantes': maxParticipantes,
       'suscritos': suscritos,
+      'imageUrl': imageUrl,
     };
   }
 }

@@ -1,4 +1,35 @@
-[
+{
+  "tracks": [
+    {
+      "nombre": "IA",
+      "eventos": [1, 4, 6, 10, 11, 13, 14, 18, 19, 21]
+    },
+    {
+      "nombre": "Exito",
+      "eventos": [2, 5, 8, 12, 15, 16, 22]
+    },
+    {
+      "nombre": "Tech",
+      "eventos": [3, 4, 7, 9, 20, 21, 23]
+    },
+    {
+      "nombre": "Innovacion",
+      "eventos": [17]
+    },
+    {
+      "nombre": "Negocios",
+      "eventos": [2, 5, 8, 15, 16, 22]
+    },
+    {
+      "nombre": "Futuro",
+      "eventos": [1, 4, 6, 10, 13, 17, 19]
+    },
+    {
+      "nombre": "Educacion",
+      "eventos": [7, 11, 20]
+    }
+  ],
+  "eventos": [
     {
       "id": 1,
       "titulo": "Explorando el Futuro de la IA",
@@ -15,7 +46,8 @@
       "hora_inicio": "10:00",
       "hora_fin": "11:30",
       "max_participantes": 100,
-      "suscritos": 40
+      "suscritos": 40,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 2,
@@ -33,7 +65,8 @@
       "hora_inicio": "14:00",
       "hora_fin": "15:30",
       "max_participantes": 120,
-      "suscritos": 65
+      "suscritos": 65,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 3,
@@ -51,7 +84,8 @@
       "hora_inicio": "09:00",
       "hora_fin": "10:30",
       "max_participantes": 80,
-      "suscritos": 50
+      "suscritos": 50,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 4,
@@ -66,7 +100,8 @@
       "hora_inicio": "11:00",
       "hora_fin": "12:30",
       "max_participantes": 150,
-      "suscritos": 90
+      "suscritos": 90,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 5,
@@ -77,14 +112,15 @@
       "invitados_especiales": [
         "Daniela Mndez"
       ],
-      "modalidad": "Hbrida",
+      "modalidad": "Hibrida",
       "lugar": "Bloque M",
       "plataforma": "Teams",
       "fecha": "2025-04-13",
       "hora_inicio": "13:00",
       "hora_fin": "14:30",
       "max_participantes": 90,
-      "suscritos": 55
+      "suscritos": 55,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 6,
@@ -102,7 +138,8 @@
       "hora_inicio": "15:00",
       "hora_fin": "16:30",
       "max_participantes": 110,
-      "suscritos": 70
+      "suscritos": 70,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 7,
@@ -117,7 +154,8 @@
       "hora_inicio": "10:00",
       "hora_fin": "11:30",
       "max_participantes": 130,
-      "suscritos": 85
+      "suscritos": 85,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 8,
@@ -134,7 +172,8 @@
       "hora_inicio": "09:30",
       "hora_fin": "11:00",
       "max_participantes": 100,
-      "suscritos": 60
+      "suscritos": 60,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 9,
@@ -153,7 +192,8 @@
       "hora_inicio": "11:30",
       "hora_fin": "13:00",
       "max_participantes": 140,
-      "suscritos": 75
+      "suscritos": 75,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 10,
@@ -168,7 +208,8 @@
       "hora_inicio": "14:30",
       "hora_fin": "16:00",
       "max_participantes": 95,
-      "suscritos": 50
+      "suscritos": 50,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 11,
@@ -178,13 +219,14 @@
       "ponente": "Lic. Hugo Torres",
       "invitados_especiales": [],
       "modalidad": "Hbrida",
+      "lugar": "Bloque M",
+      "plataforma": "Webex",
       "fecha": "2025-05-02",
       "hora_inicio": "14:00",
       "hora_fin": "17:30",
-      "lugar": "Bloque M",
-      "plataforma": "Webex",
       "max_participantes": 120,
-      "suscritos": 65
+      "suscritos": 65,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 12,
@@ -194,13 +236,14 @@
       "ponente": "Dr. Elena Ruiz",
       "invitados_especiales": [],
       "modalidad": "Hbrida",
+      "lugar": "Bloque B",
+      "plataforma": "Zoom",
       "fecha": "2025-05-03",
       "hora_inicio": "13:00",
       "hora_fin": "18:30",
-      "lugar": "Bloque B",
-      "plataforma": "Zoom",
       "max_participantes": 100,
-      "suscritos": 50
+      "suscritos": 50,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 13,
@@ -210,12 +253,13 @@
       "ponente": "Dr. Elena Ruiz",
       "invitados_especiales": [],
       "modalidad": "Presencial",
+      "lugar": "Salon G12",
       "fecha": "2025-05-04",
       "hora_inicio": "13:00",
       "hora_fin": "18:30",
-      "lugar": "Salon G12",
       "max_participantes": 110,
-      "suscritos": 55
+      "suscritos": 55,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 14,
@@ -233,7 +277,8 @@
       "lugar": "Bloque D",
       "plataforma": "Google Meet",
       "max_participantes": 130,
-      "suscritos": 70
+      "suscritos": 70,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 15,
@@ -248,7 +293,8 @@
       "hora_fin": "17:30",
       "plataforma": "Teams",
       "max_participantes": 100,
-      "suscritos": 60
+      "suscritos": 60,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 16,
@@ -265,7 +311,8 @@
       "hora_fin": "19:30",
       "lugar": "Bloque A",
       "max_participantes": 140,
-      "suscritos": 80
+      "suscritos": 80,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 17,
@@ -282,7 +329,8 @@
       "hora_fin": "20:30",
       "plataforma": "Teams",
       "max_participantes": 120,
-      "suscritos": 70
+      "suscritos": 70,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 18,
@@ -299,7 +347,8 @@
       "hora_fin": "19:30",
       "plataforma": "Webex",
       "max_participantes": 110,
-      "suscritos": 55
+      "suscritos": 55,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 19,
@@ -309,12 +358,13 @@
       "ponente": "Dr. Elena Ruiz",
       "invitados_especiales": [],
       "modalidad": "Presencial",
-      "fecha": "2025-05-10",
+      "lugar": "Salon G12",
+      "fecha": "2024-05-10",
       "hora_inicio": "13:00",
       "hora_fin": "20:30",
-      "lugar": "Bloque B",
       "max_participantes": 100,
-      "suscritos": 50
+      "suscritos": 50,
+      "imageUrl": "assets/images/event.jpg"
     },
     {
       "id": 20,
@@ -326,12 +376,68 @@
         "Camila Soto"
       ],
       "modalidad": "Hbrida",
-      "fecha": "2025-05-11",
+      "fecha": "2024-05-11",
       "hora_inicio": "08:00",
       "hora_fin": "18:30",
       "lugar": "Bloque E",
       "plataforma": "Zoom",
       "max_participantes": 130,
-      "suscritos": 75
+      "suscritos": 75,
+      "imageUrl": "assets/images/event.jpg"
+    },
+    {
+      "id": 21,
+      "titulo": "AI Insights",
+      "descripcion": "Resumen de las innovaciones en IA del mes anterior.",
+      "tema": "Inteligencia Artificial",
+      "ponente": "Dr. Ana Morales",
+      "invitados_especiales": [
+        "Dr. Luis Perez"
+      ],
+      "modalidad": "Presencial",
+      "lugar": "Salon G10",
+      "fecha": "2025-03-15",
+      "hora_inicio": "09:00",
+      "hora_fin": "10:30",
+      "max_participantes": 80,
+      "suscritos": 60,
+      "imageUrl": "assets/images/event.jpg"
+    },
+    {
+      "id": 22,
+      "titulo": "Digital Success",
+      "descripcion": "Análisis retroactivo sobre la transformación digital lograda en el último trimestre.",
+      "tema": "Casos de exito",
+      "ponente": "Ing. Marta Rios",
+      "invitados_especiales": [
+        "Carlos Ramirez"
+      ],
+      "modalidad": "Hibrida",
+      "lugar": "Bloque C",
+      "fecha": "2025-03-20",
+      "hora_inicio": "11:00",
+      "hora_fin": "12:30",
+      "max_participantes": 100,
+      "suscritos": 75,
+      "imageUrl": "assets/images/event.jpg"
+    },
+    {
+      "id": 23,
+      "titulo": "Blockchain Forum",
+      "descripcion": "Foro de discusión sobre las tendencias y desafíos del blockchain.",
+      "tema": "Tecnologa",
+      "ponente": "MSc. Rafael Diaz",
+      "invitados_especiales": [
+        "Sofia Torres"
+      ],
+      "modalidad": "Virtual",
+      "plataforma": "Google Meet",
+      "fecha": "2025-03-25",
+      "hora_inicio": "14:00",
+      "hora_fin": "15:30",
+      "max_participantes": 90,
+      "suscritos": 65,
+      "imageUrl": "assets/images/event.jpg"
     }
-] 
+  ]
+}

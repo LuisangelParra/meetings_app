@@ -9,7 +9,7 @@ import 'package:meetings_app/common/widgets/custom_shapes/containers/primary_hea
 import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_appbar.dart';
 import 'package:meetings_app/utils/constants/text_strings.dart';
-import 'package:meetings_app/common/widgets/events/lists/live_events_list.dart';
+import 'package:meetings_app/common/widgets/events/lists/past_events_list.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LSectionHeading(
-                      title: "Popular Events",
+                      title: "Proximos Eventos",
                       textColor: dark ? LColors.textWhite : LColors.dark,
                       onPressed: (){
                         Navigator.push(
@@ -78,7 +78,7 @@ class HomeScreen extends StatelessWidget {
               ),
               SizedBox(height: LSizes.sm),
 
-              // Running events list
+              // Past events list
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: LSizes.lg * 1.5),
@@ -86,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LSectionHeading(
-                      title: "Running Events",
+                      title: "Eventos pasados",
                       textColor: dark ? LColors.textWhite : LColors.dark,
                       onPressed: (){
                         Navigator.push(
@@ -97,7 +97,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     SizedBox(height: LSizes.sm),
                     // Replace the single event container with the RunningEventsList widget
-                    LLiveEventList(),
+                    LPastEventList(),
                   ],
                 ),
               ),

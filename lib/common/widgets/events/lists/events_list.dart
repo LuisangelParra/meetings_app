@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/features/app/models/event_model.dart';
-import 'package:meetings_app/common/widgets/events/event_cards/event_horizontal_card.dart';
+import 'package:meetings_app/common/widgets/events/cards/event_horizontal_card.dart';
 
 class LEventList extends StatelessWidget {
   const LEventList({super.key});
