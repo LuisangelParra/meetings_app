@@ -50,6 +50,7 @@ flutter:
   assets:
     - assets/logos/
     - assets/images/
+    - assets/data/events.json
   
   #----------------- LOCAL FONTS -----------------#
   fonts:

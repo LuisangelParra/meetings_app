@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/common/widgets/appbar/appbar.dart';
-import 'package:meetings_app/common/widgets/events/lists/events_list.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class AllEventsScreen extends StatelessWidget {
-  const AllEventsScreen({super.key, this.events});
+  const AllEventsScreen({super.key, required this.listWidget });
 
   /// Lista de eventos a mostrar en pantalla
-  final List<String>? events;
+  final Widget listWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class AllEventsScreen extends StatelessWidget {
             delegate: _SliverAppBarDelegate(
               height: LSizes.appBarHeight * 1.5, // Ajusta según necesites
               padding: const EdgeInsets.symmetric(
-                horizontal: LSizes.lg * 1.5,
+                horizontal: LSizes.lg * 1.2,
               ),
               child: const LAppBar(
                 showBackArrow: true,
@@ -38,8 +37,8 @@ class AllEventsScreen extends StatelessWidget {
             sliver: SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  LEventList(),
                   // Si LEventList() ya incluye la lista de items, no es necesario agregar más widgets aquí.
+                  listWidget,
                 ],
               ),
             ),

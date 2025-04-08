@@ -17,7 +17,7 @@ class EventHorizontalCard extends StatelessWidget {
     final dark = LHelperFunctions.isDarkMode(context);
     return Container(
       width: double.infinity,
-      height: 120,
+      height: 110,
       margin: const EdgeInsets.only(bottom: LSizes.spaceBtwItems),
       child: Row(
         children: [
@@ -26,7 +26,7 @@ class EventHorizontalCard extends StatelessWidget {
             child: Image.asset(
               event.imageUrl,
               fit: BoxFit.cover,
-              width: 120,
+              width: 110,
               height: double.infinity,
             ),
           ),

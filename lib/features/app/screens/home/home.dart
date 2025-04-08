@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/search_container.dart';
+import 'package:meetings_app/common/widgets/events/lists/events_list.dart';
 import 'package:meetings_app/common/widgets/texts/section_heading.dart';
-import 'package:meetings_app/features/app/all_events/all_events.dart';
+import 'package:meetings_app/features/app/screens/all_events/all_events.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_carousel.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/primary_header_container.dart';
@@ -67,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                       onPressed: (){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AllEventsScreen()), // Ir a otra página
+                          MaterialPageRoute(builder: (context) => AllEventsScreen(listWidget: LEventList(),)), // Ir a otra página
                         );
                       },
                     ),
@@ -75,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: LSizes.spaceBtwSections/2),
+              SizedBox(height: LSizes.sm),
 
               // Running events list
               Padding(
@@ -90,11 +91,11 @@ class HomeScreen extends StatelessWidget {
                       onPressed: (){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AllEventsScreen()), // Ir a otra página
+                          MaterialPageRoute(builder: (context) => AllEventsScreen(listWidget: LEventList(),)), // Ir a otra página
                         );
                       },
                     ),
-                    SizedBox(height: LSizes.spaceBtwItems),
+                    SizedBox(height: LSizes.sm),
                     // Replace the single event container with the RunningEventsList widget
                     LLiveEventList(),
                   ],
