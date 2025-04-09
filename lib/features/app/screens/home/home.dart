@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen>
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: LSizes.lg * 1.5),
                           child: SizedBox(
-                            width: 180,
+                            width: 200,
                             child: Text(
                               LTexts.homeAppbarTitle,
                               style: Theme.of(context).textTheme.headlineMedium?.copyWith(

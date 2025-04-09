@@ -54,7 +54,7 @@ class OnBoardingPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
-                        "Get Started",
+                        "Comenzar",
                         style: TextStyle(
                           color: Colors.white, // Color del texto
                           fontSize: 24,

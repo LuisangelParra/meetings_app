@@ -3,7 +3,6 @@ import 'package:meetings_app/common/widgets/appbar/appbar.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 
 import '../../../../../utils/constants/colors.dart';
-import 'package:iconsax/iconsax.dart';
 
 class LHomeAppBar extends StatelessWidget {
   const LHomeAppBar({
