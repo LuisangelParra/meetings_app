@@ -15,7 +15,6 @@ class LHomeAppBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: LSizes.lg),
       child: LAppBar(
-        leadingIcon: Iconsax.menu_1,
         actions: [
           Container(
             decoration: BoxDecoration(

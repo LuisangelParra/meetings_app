@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'package:meetings_app/features/app/screens/home/home.dart';
+import 'package:meetings_app/features/app/screens/main/main.dart';
 
 class OnBoardingController extends GetxController {
   static OnBoardingController get instance => Get.find();
@@ -10,6 +10,6 @@ class OnBoardingController extends GetxController {
   void completeOnBoarding() {
     final storage = GetStorage();
     storage.write('IsFirstTime', false);
-    Get.offAll(() => HomeScreen());
+    Get.offAll(() => MainScreen());
   }
 }

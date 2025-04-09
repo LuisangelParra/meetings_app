@@ -13,14 +13,15 @@ class LSearchContainer extends StatelessWidget {
     this.onTap,
     this.isPostIcon = true,
     this.padding = const EdgeInsets.all(LSizes.sm),
+    this.postIconFunction,
   });
-
 
   final String text;
   final IconData? icon, postIcon;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
   final bool isPostIcon;
+  final VoidCallback? postIconFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +37,17 @@ class LSearchContainer extends StatelessWidget {
         decoration: InputDecoration(
           hintText: text,
           hintStyle: TextStyle(color: LColors.darkGrey),
-          border: InputBorder.none, 
-          enabledBorder: InputBorder.none, 
-          focusedBorder: InputBorder.none, 
-          disabledBorder: InputBorder.none, 
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
           prefixIcon: Icon(icon, color: LColors.darkGrey),
-          suffixIcon: isPostIcon ? Icon(postIcon, color: LColors.primary) : null,
+          suffixIcon: isPostIcon
+              ? IconButton(
+                  icon: Icon(postIcon, color: LColors.primary),
+                  onPressed: postIconFunction,
+                )
+              : null,
         ),
       ),
     );

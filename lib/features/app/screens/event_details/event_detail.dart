@@ -6,7 +6,7 @@ import 'package:meetings_app/common/widgets/events/info/event_chip.dart';
 import 'package:meetings_app/features/app/models/event2_model.dart';
 import 'package:meetings_app/features/app/models/track_model.dart';
 import 'package:meetings_app/features/app/repository/track_repository.dart';
-import 'package:meetings_app/features/app/screens/event_details/widgets/event_detail_footer.dart';
+import 'package:meetings_app/features/app/screens/event_details/widgets/footer.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
@@ -20,14 +20,17 @@ class EventDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = LHelperFunctions.isDarkMode(context);
 
+    // Calcular si el evento es pasado o futuro.
+    final now = DateTime.now();
+    final isPastEvent = event.fecha.isBefore(now);
+
     return Scaffold(
       backgroundColor: dark
           ? LColors.dark.withValues(alpha: 0.95)
           : LColors.light.withValues(alpha: 0.95),
-          
-      bottomNavigationBar: _buildFooter(context),
-      // Usamos LayoutBuilder + ConstrainedBox para que el SingleChildScrollView
-      // tenga al menos la altura completa de la pantalla.
+      bottomNavigationBar: EventDetailFooter(event: event, pastEvent: isPastEvent),
+      // LayoutBuilder y ConstrainedBox para asegurar que el SingleChildScrollView
+      // ocupe al menos la altura de la pantalla (evitando que el contenido quede abajo del footer).
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -37,7 +40,7 @@ class EventDetailScreen extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // Cabecera con imagen/banner del evento
+                  // Cabecera con imagen/banner del evento.
                   LEventDetailHeaderContainer(
                     defaultFigures: false,
                     image: event.imageUrl,
@@ -46,7 +49,7 @@ class EventDetailScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: LSizes.lg),
                       child: Column(
                         children: [
-                          // Barra superior con botón de regresar y alertas
+                          // Barra superior con botón de regresar y alertas.
                           LAppBar(
                             showBackArrow: true,
                             actions: [
@@ -59,14 +62,14 @@ class EventDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Tarjeta principal superpuesta (detalles y descripción)
+                  // Tarjeta principal superpuesta (detalles y descripción).
                   Positioned(
-                    top: 220, // Ajusta para controlar la superposición sobre la cabecera
+                    top: 220, // Ajusta para controlar la superposición sobre la cabecera.
                     left: 16,
                     right: 16,
                     child: Column(
                       children: [
-                        // Sección 1: Información básica (título, fecha, ubicación, tracks, precio y "Register Now")
+                        // Sección 1: Información básica (título, fecha, ubicación, tracks, precio y "Register Now").
                         Container(
                           decoration: BoxDecoration(
                             color: dark ? LColors.accent3 : LColors.white,
@@ -106,6 +109,7 @@ class EventDetailScreen extends StatelessWidget {
                                     ),
                               ),
                               const SizedBox(height: LSizes.sm),
+                              // Sección de tracks: obtenidos dinámicamente mediante FutureBuilder.
                               Row(
                                 children: [
                                   FutureBuilder<List<Track>>(
@@ -113,7 +117,7 @@ class EventDetailScreen extends StatelessWidget {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState == ConnectionState.waiting) {
                                         return const SizedBox(
-                                          height: 20, // Espacio mientras se carga (opcional)
+                                          height: 20,
                                           width: 20,
                                           child: CircularProgressIndicator(strokeWidth: 2),
                                         );
@@ -147,7 +151,7 @@ class EventDetailScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: LSizes.md),
-                        // Sección 2: Descripción y Speakers
+                        // Sección 2: Descripción, speakers y los invitados especiales.
                         Container(
                           decoration: BoxDecoration(
                             color: dark ? LColors.accent3 : LColors.white,
@@ -173,14 +177,29 @@ class EventDetailScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: LSizes.md),
                               Text(
-                                'Speakers',
+                                'Invitados especiales',
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: dark ? LColors.textWhite : LColors.dark,
                                     ),
                               ),
-                              const SizedBox(height: 24),
-                              // Agrega la lista de speakers aquí si lo deseas...
+                              const SizedBox(height: 8),
+                              // Invita especiales: se muestran como chips usando un Wrap.
+                              if (event.invitadosEspeciales.isNotEmpty)
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 4,
+                                  children: event.invitadosEspeciales
+                                      .map((invitado) => TrackChip(context, invitado))
+                                      .toList(),
+                                )
+                              else
+                                Text(
+                                  'No special guests',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: dark ? LColors.textWhite : LColors.darkGrey,
+                                      ),
+                                ),
                             ],
                           ),
                         ),
@@ -193,30 +212,6 @@ class EventDetailScreen extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-
-  /// Construye el footer fijo.
-  Widget _buildFooter(BuildContext context) {
-    final dark = LHelperFunctions.isDarkMode(context);
-    return Container(
-      height: 100,
-      padding: const EdgeInsets.symmetric(horizontal: LSizes.lg, vertical: LSizes.sm),
-      decoration: BoxDecoration(
-        color: dark ? LColors.accent3 : LColors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            offset: const Offset(0, -2),
-            blurRadius: 6,
-          ),
-        ],
-      ),
-      child: SubscribeFooter(dark: dark, event: event),
     );
   }
 }

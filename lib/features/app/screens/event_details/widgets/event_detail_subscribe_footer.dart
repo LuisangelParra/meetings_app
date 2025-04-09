@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/features/app/models/event2_model.dart';
-
 import 'package:meetings_app/utils/constants/colors.dart';
 
 class SubscribeFooter extends StatefulWidget {
@@ -23,9 +22,12 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min, // Ocupa solo la altura mínima necesaria
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Información de asistentes y cupos restantes (puedes actualizar estos valores si lo deseas)
+        // Información de asistentes y cupos restantes
         Column(
+          mainAxisSize: MainAxisSize.min, // Altura mínima
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -47,8 +49,8 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
         const Spacer(),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: isSubscribed ? LColors.error: LColors.primary,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            backgroundColor: isSubscribed ? LColors.error : LColors.primary,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // padding reducido
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -57,12 +59,10 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
             setState(() {
               isSubscribed = !isSubscribed;
             });
-            // Aquí puedes agregar la lógica para suscribirse o cancelar la suscripción.
+            // Lógica para suscribirse o cancelar la suscripción
             if (isSubscribed) {
-              // Lógica de suscripción.
               print("Suscribirse al evento");
             } else {
-              // Lógica para cancelar la suscripción.
               print("Cancelar la suscripción al evento");
             }
           },
@@ -70,7 +70,7 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
             isSubscribed ? 'Cancelar suscripción' : 'Suscribirse',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: LColors.textWhite,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
           ),
         ),

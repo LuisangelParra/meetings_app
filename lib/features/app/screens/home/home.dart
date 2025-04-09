@@ -26,12 +26,13 @@ class HomeScreen extends StatelessWidget {
           Column(
             children: [
               LPrimaryHeaderContainer(
+                height: 230,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// -- AppBar --
                     LHomeAppBar(),
-                    SizedBox(height: LSizes.spaceBtwSections),
+                    SizedBox(height: LSizes.sm),
 
                     /// -- Header --
                     Padding(
@@ -107,10 +108,10 @@ class HomeScreen extends StatelessWidget {
 
           // Searchbar
           Positioned(
-            top: 195,
+            top: 175,
             left: LSizes.lg * 1.5,
             right: LSizes.lg * 1.5,
-            child: LSearchContainer(text: 'Search events'),
+            child: LSearchContainer(text: 'Buscar evento'),
           ),
         ],
       )),
