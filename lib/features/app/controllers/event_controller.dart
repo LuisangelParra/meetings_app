@@ -50,25 +50,14 @@ class EventController extends ChangeNotifier {
     }
   }
 
-  /// Agrega un nuevo evento.
-  void addEvent(Event event) {
-    _events.add(event);
-    notifyListeners();
+  List<Event> getPastEvents() {
+    final now = DateTime.now();
+    return _events.where((event) => event.fecha.isBefore(now)).toList();
   }
 
-  /// Actualiza un evento existente.
-  void updateEvent(Event updatedEvent) {
-    int index = _events.indexWhere((event) => event.id == updatedEvent.id);
-    if (index != -1) {
-      _events[index] = updatedEvent;
-      notifyListeners();
-    }
-  }
-
-  /// Elimina un evento a partir de su id.
-  void removeEvent(int id) {
-    _events.removeWhere((event) => event.id == id);
-    notifyListeners();
+  List<Event> getUpcomingEvents() {
+    final now = DateTime.now();
+    return _events.where((event) => event.fecha.isAfter(now)).toList();
   }
 
   /// Obtiene todos los comentarios de un evento específico.

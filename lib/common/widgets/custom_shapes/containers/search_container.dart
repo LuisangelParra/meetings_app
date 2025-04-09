@@ -14,6 +14,7 @@ class LSearchContainer extends StatelessWidget {
     this.isPostIcon = true,
     this.padding = const EdgeInsets.all(LSizes.sm),
     this.postIconFunction,
+    this.controller,
   });
 
   final String text;
@@ -22,6 +23,8 @@ class LSearchContainer extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final bool isPostIcon;
   final VoidCallback? postIconFunction;
+
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class LSearchContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
+        controller: controller,
         textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
           hintText: text,
