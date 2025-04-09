@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meetings_app/common/widgets/appbar/appbar.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/event_detail_header_container.dart';
-import 'package:meetings_app/common/widgets/events/alerts/alert_toggle_button.dart';
+//import 'package:meetings_app/common/widgets/events/alerts/alert_toggle_button.dart';
 import 'package:meetings_app/common/widgets/events/comments/add_comment_section.dart';
 import 'package:meetings_app/common/widgets/events/comments/comments_list.dart';
 import 'package:meetings_app/common/widgets/events/info/event_chip.dart';
 import 'package:meetings_app/features/app/controllers/event_controller.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/models/track_model.dart';
 import 'package:meetings_app/features/app/repository/track_repository.dart';
 import 'package:meetings_app/features/app/screens/event_details/widgets/footer.dart';
@@ -138,7 +138,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             LAppBar(
                               showBackArrow: true,
                               actions: [
-                                AlertToggleButton(title: 'Alert'),
+                                //AlertToggleButton(title: 'Alert'),
                               ],
                             ),
                             const SizedBox(height: 20),

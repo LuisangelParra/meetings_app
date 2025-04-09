@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 
 class SubscribeFooter extends StatefulWidget {

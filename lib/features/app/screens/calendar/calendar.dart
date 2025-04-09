@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meetings_app/features/app/screens/calendar/widgets/event_list.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/controllers/calendar_controller.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';

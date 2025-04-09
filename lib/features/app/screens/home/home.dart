@@ -4,7 +4,7 @@ import 'package:meetings_app/common/widgets/custom_shapes/containers/primary_hea
 import 'package:meetings_app/common/widgets/custom_shapes/containers/search_container.dart';
 import 'package:meetings_app/common/widgets/events/lists/past_events_list.dart';
 import 'package:meetings_app/common/widgets/texts/section_heading.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
 import 'package:meetings_app/features/app/screens/all_events/all_events.dart';
 import 'package:meetings_app/features/app/screens/event_details/event_detail.dart';

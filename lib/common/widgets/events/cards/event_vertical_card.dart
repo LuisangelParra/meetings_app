@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:meetings_app/common/widgets/events/alerts/alert_toggle_button.dart';
 import 'package:meetings_app/common/widgets/events/info/event_chip.dart';
 import 'package:meetings_app/common/widgets/events/info/event_info.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/screens/event_details/event_detail.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';

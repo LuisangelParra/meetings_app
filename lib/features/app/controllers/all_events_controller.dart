@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/models/track_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
 import 'package:meetings_app/features/app/repository/track_repository.dart';

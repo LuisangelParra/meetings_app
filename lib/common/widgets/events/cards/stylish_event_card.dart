@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/screens/event_details/event_detail.dart';
 
 class StylishEventCard extends StatelessWidget {

@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/models/event_comment_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
 
 class EventController extends ChangeNotifier {
   final EventRepository _eventRepository = EventRepository();
+
+  final Map<int, double> _ratings = {};
 
   // Lista interna para almacenar los eventos.
   List<Event> _events = [];
@@ -75,6 +77,12 @@ class EventController extends ChangeNotifier {
     final totalRating =
         eventComments.fold(0, (sum, comment) => sum + comment.rating);
     return totalRating / eventComments.length;
+  }
+
+    // Método para actualizar el rating de un evento.
+  void updateRating(int eventId, double newRating) {
+    _ratings[eventId] = newRating;
+    notifyListeners();
   }
 
   /// Agrega un nuevo comentario a un evento.
