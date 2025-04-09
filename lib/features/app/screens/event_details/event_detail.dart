@@ -28,6 +28,20 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   // Flag para controlar si el usuario ha enviado un comentario
   bool hasSubmittedComment = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    final eventController =
+        Provider.of<EventController>(context, listen: false);
+    if (eventController.events.isEmpty) {
+      await eventController.loadEvents();
+    }
+  }
+
   // Método para actualizar el estado cuando se envía un comentario
   void onCommentSubmitted() {
     setState(() {
@@ -92,6 +106,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         eventController.hasCommentedEvent(widget.event.id) ||
             hasSubmittedComment;
 
+    // Verificar si el usuario está suscrito a este evento
+    final isSubscribed = eventController.isSubscribed(widget.event.id);
+
     // Contar los comentarios para este evento
     final commentCount =
         eventController.getCommentsForEvent(widget.event.id).length;
@@ -114,6 +131,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           EventDetailFooter(event: widget.event, pastEvent: isPastEvent),
       body: RefreshIndicator(
         onRefresh: () async {
+          await _loadEvents();
           setState(() {});
         },
         child: LayoutBuilder(
@@ -218,6 +236,28 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: LSizes.sm),
+                                // Mostrar badge de suscripción si está suscrito
+                                if (isSubscribed)
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: LColors.primary.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border:
+                                          Border.all(color: LColors.primary),
+                                    ),
+                                    child: Text(
+                                      'Estás suscrito a este evento',
+                                      style: TextStyle(
+                                        color: LColors.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
                                 // Fecha, ubicación y hora
                                 Text(
                                   LHelperFunctions.formatDate(

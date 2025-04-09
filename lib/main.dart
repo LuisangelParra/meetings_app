@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
 import 'package:meetings_app/features/app/repository/track_repository.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +12,12 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize date formatting
   await initializeDateFormatting('es_ES', null);
+
+  // Initialize GetStorage
+  await GetStorage.init();
 
   // Run the app
   runApp(
@@ -18,7 +25,6 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<TrackRepository>(create: (_) => TrackRepository()),
-
         Provider<EventRepository>(create: (_) => EventRepository()),
         // Add EventController provider
         ChangeNotifierProvider(
