@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/search_container.dart';
-import 'package:meetings_app/common/widgets/events/location/event_location.dart';
+import 'package:meetings_app/common/widgets/events/lists/events_list.dart';
 import 'package:meetings_app/common/widgets/texts/section_heading.dart';
+import 'package:meetings_app/features/app/screens/all_events/all_events.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_carousel.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/primary_header_container.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_appbar.dart';
 import 'package:meetings_app/utils/constants/text_strings.dart';
-import 'package:meetings_app/features/app/screens/home/widgets/running_events_list.dart';
+import 'package:meetings_app/common/widgets/events/lists/past_events_list.dart';
+import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final dark = LHelperFunctions.isDarkMode(context);
     return Scaffold(
-      backgroundColor: LColors.light.withValues(alpha: 0.95),
+      backgroundColor: dark ? LColors.dark.withValues(alpha: 0.95) : LColors.light.withValues(alpha: 0.95),
       body: SingleChildScrollView(
           child: Stack(
         children: [
           Column(
             children: [
               LPrimaryHeaderContainer(
+                height: 230,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// -- AppBar --
                     LHomeAppBar(),
-                    SizedBox(height: LSizes.spaceBtwSections),
+                    SizedBox(height: LSizes.sm),
 
                     /// -- Header --
                     Padding(
@@ -51,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: LSizes.spaceBtwSections),
+              SizedBox(height: LSizes.spaceBtwSections/2),
 
               // Popular events list
               Padding(
@@ -61,17 +64,22 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LSectionHeading(
-                      title: "Popular Events",
-                      textColor: LColors.dark,
+                      title: "Proximos Eventos",
+                      textColor: dark ? LColors.textWhite : LColors.dark,
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AllEventsScreen(listWidget: LEventList(),)), // Ir a otra página
+                        );
+                      },
                     ),
-                    SizedBox(height: LSizes.spaceBtwItems),
                     LEventCarousel(),
                   ],
                 ),
               ),
-              SizedBox(height: LSizes.spaceBtwSections),
+              SizedBox(height: LSizes.sm),
 
-              // Running events list
+              // Past events list
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: LSizes.lg * 1.5),
@@ -79,12 +87,18 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LSectionHeading(
-                      title: "Running Events",
-                      textColor: LColors.dark,
+                      title: "Eventos pasados",
+                      textColor: dark ? LColors.textWhite : LColors.dark,
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AllEventsScreen(listWidget: LEventList(),)), // Ir a otra página
+                        );
+                      },
                     ),
-                    SizedBox(height: LSizes.spaceBtwItems),
+                    SizedBox(height: LSizes.sm),
                     // Replace the single event container with the RunningEventsList widget
-                    RunningEventsList(),
+                    LPastEventList(),
                   ],
                 ),
               ),
@@ -94,10 +108,10 @@ class HomeScreen extends StatelessWidget {
 
           // Searchbar
           Positioned(
-            top: 195,
+            top: 175,
             left: LSizes.lg * 1.5,
             right: LSizes.lg * 1.5,
-            child: LSearchContainer(text: 'Search events'),
+            child: LSearchContainer(text: 'Buscar evento'),
           ),
         ],
       )),

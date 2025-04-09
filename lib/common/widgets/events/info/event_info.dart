@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
-import 'package:iconsax/iconsax.dart';
 
-class LEventLocation extends StatelessWidget {
-  const LEventLocation({
+class LEventDetail extends StatelessWidget {
+  const LEventDetail({
     super.key,
-    required this.location,
+    required this.information,
+    required this.icon,
   });
 
-  final String location;
+  final IconData icon;
+  final String information;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(Iconsax.flag, color: LColors.primary, size: 16),
+        Icon(icon, color: LColors.primary, size: 16),
         const SizedBox(width: LSizes.sm/2),
-        Text(location, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        Text(information, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           color: LColors.primary,
         )),
       ],

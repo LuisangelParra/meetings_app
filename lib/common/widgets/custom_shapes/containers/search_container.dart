@@ -11,14 +11,17 @@ class LSearchContainer extends StatelessWidget {
     this.icon = Iconsax.search_favorite,
     this.postIcon = Iconsax.filter,
     this.onTap,
+    this.isPostIcon = true,
     this.padding = const EdgeInsets.all(LSizes.sm),
+    this.postIconFunction,
   });
-
 
   final String text;
   final IconData? icon, postIcon;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
+  final bool isPostIcon;
+  final VoidCallback? postIconFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class LSearchContainer extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: dark ? LColors.dark : LColors.white,
+        color: dark ? LColors.accent2 : LColors.white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
@@ -34,12 +37,17 @@ class LSearchContainer extends StatelessWidget {
         decoration: InputDecoration(
           hintText: text,
           hintStyle: TextStyle(color: LColors.darkGrey),
-          border: InputBorder.none, 
-          enabledBorder: InputBorder.none, 
-          focusedBorder: InputBorder.none, 
-          disabledBorder: InputBorder.none, 
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
           prefixIcon: Icon(icon, color: LColors.darkGrey),
-          suffixIcon: Icon(postIcon, color: LColors.primary)
+          suffixIcon: isPostIcon
+              ? IconButton(
+                  icon: Icon(postIcon, color: LColors.primary),
+                  onPressed: postIconFunction,
+                )
+              : null,
         ),
       ),
     );
