@@ -4,25 +4,39 @@ import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
+import 'package:provider/provider.dart';
+import 'package:meetings_app/features/app/controllers/event_controller.dart';
 
 class StylishEventCard extends StatelessWidget {
   final Event event;
-  final bool
-      isSubscribed; // Nuevo parámetro para indicar si el evento está suscrito
+  final bool isSubscribed;
 
   const StylishEventCard({
     super.key,
     required this.event,
-    this.isSubscribed = false, // Valor por defecto: false
+    this.isSubscribed = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final dark = LHelperFunctions.isDarkMode(context);
+    final eventController = Provider.of<EventController>(context);
+
+    // Intentar obtener el evento actualizado del controlador
+    Event currentEvent = event;
+    final updatedEvent = eventController.getEventById(event.id);
+    if (updatedEvent != null) {
+      currentEvent = updatedEvent;
+    }
 
     // Determinar si el evento es pasado o futuro
     final now = DateTime.now();
-    final isPastEvent = event.fecha.isBefore(now);
+    final isPastEvent = currentEvent.fecha.isBefore(now);
+
+    // Calcular si los cupos están agotados
+    final cuposRestantes =
+        currentEvent.maxParticipantes - currentEvent.suscritos;
+    final cuposAgotados = cuposRestantes <= 0;
 
     return Material(
       color: Colors.transparent,
@@ -54,7 +68,7 @@ class StylishEventCard extends StatelessWidget {
                   children: [
                     // Imagen
                     Image.asset(
-                      event.imageUrl,
+                      currentEvent.imageUrl,
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
@@ -81,6 +95,28 @@ class StylishEventCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                    // Indicador de evento sin cupos
+                    if (!isPastEvent && cuposAgotados && !isSubscribed)
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: LColors.error.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            'Sin cupos',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
                     // Indicador de suscripción si está suscrito
                     if (isSubscribed)
                       Positioned(
@@ -96,7 +132,7 @@ class StylishEventCard extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.check_circle_outline,
                                 color: Colors.white,
                                 size: 14,
@@ -126,7 +162,7 @@ class StylishEventCard extends StatelessWidget {
                 children: [
                   // Título del evento
                   Text(
-                    event.titulo,
+                    currentEvent.titulo,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -144,14 +180,14 @@ class StylishEventCard extends StatelessWidget {
                           children: [
                             // Fecha
                             LEventDetail(
-                              information:
-                                  LHelperFunctions.formatDate(event.fecha),
+                              information: LHelperFunctions.formatDate(
+                                  currentEvent.fecha),
                               icon: Icons.calendar_today,
                             ),
                             const SizedBox(height: 8),
                             // Lugar
                             LEventDetail(
-                              information: event.lugar,
+                              information: currentEvent.lugar,
                               icon: Icons.location_on,
                             ),
                           ],
@@ -165,24 +201,32 @@ class StylishEventCard extends StatelessWidget {
                               ? LColors.dark.withOpacity(0.3)
                               : LColors.light,
                           borderRadius: BorderRadius.circular(12),
+                          border: cuposAgotados && !isSubscribed
+                              ? Border.all(color: LColors.error, width: 1.5)
+                              : null,
                         ),
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.person,
                               size: 20,
-                              color: LColors.primary,
+                              color: cuposAgotados && !isSubscribed
+                                  ? LColors.error
+                                  : LColors.primary,
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${event.suscritos}/${event.maxParticipantes}',
+                              '${currentEvent.suscritos}/${currentEvent.maxParticipantes}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color:
-                                        dark ? LColors.textWhite : LColors.dark,
+                                    color: cuposAgotados && !isSubscribed
+                                        ? LColors.error
+                                        : (dark
+                                            ? LColors.textWhite
+                                            : LColors.dark),
                                   ),
                             ),
                           ],

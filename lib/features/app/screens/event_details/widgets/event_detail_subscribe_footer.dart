@@ -24,12 +24,18 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
   @override
   Widget build(BuildContext context) {
     // Usar Provider para acceder al controlador
-    final eventController =
-        Provider.of<EventController>(context); // Listen: true por defecto
+    final eventController = Provider.of<EventController>(context);
     final isSubscribed = eventController.isSubscribed(widget.event.id);
 
+    // Recuperar el evento nuevamente para tener los datos actualizados
+    Event currentEvent = widget.event;
+    final updatedEvent = eventController.getEventById(widget.event.id);
+    if (updatedEvent != null) {
+      currentEvent = updatedEvent;
+    }
+
     final cuposRestantes =
-        widget.event.maxParticipantes - widget.event.suscritos;
+        currentEvent.maxParticipantes - currentEvent.suscritos;
     final cuposAgotados = cuposRestantes <= 0;
 
     return Row(
@@ -43,7 +49,7 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '${widget.event.suscritos}/${widget.event.maxParticipantes} asistentes',
+              '${currentEvent.suscritos}/${currentEvent.maxParticipantes} asistentes',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: widget.dark ? LColors.textWhite : LColors.dark,
                   ),
@@ -73,24 +79,38 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: cuposAgotados && !isSubscribed
+          onPressed: (cuposAgotados && !isSubscribed) || _isLoading
               ? null
               : () async {
-                  if (_isLoading) return;
-
                   setState(() {
                     _isLoading = true;
                   });
 
                   try {
+                    bool success;
                     if (isSubscribed) {
                       // Cancelar suscripción
-                      eventController.unsubscribeFromEvent(widget.event.id);
-                      _showSnackBar('Suscripción cancelada');
+                      success =
+                          eventController.unsubscribeFromEvent(currentEvent.id);
+                      if (success) {
+                        _showSnackBar('Suscripción cancelada');
+                      } else {
+                        _showSnackBar('Error al cancelar la suscripción',
+                            isError: true);
+                      }
                     } else {
                       // Suscribirse
-                      eventController.subscribeToEvent(widget.event.id);
-                      _showSnackBar('¡Te has suscrito al evento!');
+                      success =
+                          eventController.subscribeToEvent(currentEvent.id);
+                      if (success) {
+                        _showSnackBar('¡Te has suscrito al evento!');
+                      } else if (cuposAgotados) {
+                        _showSnackBar('No hay cupos disponibles',
+                            isError: true);
+                      } else {
+                        _showSnackBar('Error al suscribirse al evento',
+                            isError: true);
+                      }
                     }
                   } catch (e) {
                     print('Error en suscripción: $e');

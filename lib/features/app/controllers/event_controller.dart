@@ -131,19 +131,42 @@ class EventController extends ChangeNotifier {
   }
 
   // Método para suscribirse a un evento
-  void subscribeToEvent(int eventId) {
+  bool subscribeToEvent(int eventId) {
     // Verificar si ya está suscrito
     if (_subscribedEventIds.contains(eventId)) {
-      return;
+      return true; // Ya está suscrito
     }
+
+    // Buscar el evento
+    final eventIndex = _events.indexWhere((event) => event.id == eventId);
+    if (eventIndex == -1) return false; // Evento no encontrado
 
     // Verificar si hay cupos disponibles
-    final event = getEventById(eventId);
-    if (event == null) return;
-
+    final event = _events[eventIndex];
     if (event.suscritos >= event.maxParticipantes) {
-      return; // No hay cupos disponibles
+      return false; // No hay cupos disponibles
     }
+
+    // Crear una copia actualizada del evento con un suscrito más
+    final updatedEvent = Event(
+      id: event.id,
+      titulo: event.titulo,
+      descripcion: event.descripcion,
+      tema: event.tema,
+      ponente: event.ponente,
+      invitadosEspeciales: event.invitadosEspeciales,
+      modalidad: event.modalidad,
+      lugar: event.lugar,
+      fecha: event.fecha,
+      horaInicio: event.horaInicio,
+      horaFin: event.horaFin,
+      maxParticipantes: event.maxParticipantes,
+      suscritos: event.suscritos + 1, // Incrementar el contador de suscritos
+      imageUrl: event.imageUrl,
+    );
+
+    // Actualizar el evento en la lista
+    _events[eventIndex] = updatedEvent;
 
     // Agregar a la lista de suscritos
     _subscribedEventIds.add(eventId);
@@ -153,10 +176,47 @@ class EventController extends ChangeNotifier {
 
     // Notificar cambios
     notifyListeners();
+
+    return true;
   }
 
   // Método para cancelar la suscripción a un evento
-  void unsubscribeFromEvent(int eventId) {
+  bool unsubscribeFromEvent(int eventId) {
+    // Verificar si está suscrito
+    if (!_subscribedEventIds.contains(eventId)) {
+      return false; // No está suscrito
+    }
+
+    // Buscar el evento
+    final eventIndex = _events.indexWhere((event) => event.id == eventId);
+    if (eventIndex == -1) return false; // Evento no encontrado
+
+    // Obtener el evento actual
+    final event = _events[eventIndex];
+
+    // Crear una copia actualizada del evento con un suscrito menos, pero nunca menos de 0
+    final updatedEvent = Event(
+      id: event.id,
+      titulo: event.titulo,
+      descripcion: event.descripcion,
+      tema: event.tema,
+      ponente: event.ponente,
+      invitadosEspeciales: event.invitadosEspeciales,
+      modalidad: event.modalidad,
+      lugar: event.lugar,
+      fecha: event.fecha,
+      horaInicio: event.horaInicio,
+      horaFin: event.horaFin,
+      maxParticipantes: event.maxParticipantes,
+      suscritos: event.suscritos > 0
+          ? event.suscritos - 1
+          : 0, // Decrementar el contador de suscritos
+      imageUrl: event.imageUrl,
+    );
+
+    // Actualizar el evento en la lista
+    _events[eventIndex] = updatedEvent;
+
     // Remover de la lista de suscritos
     _subscribedEventIds.remove(eventId);
 
@@ -165,6 +225,8 @@ class EventController extends ChangeNotifier {
 
     // Notificar cambios
     notifyListeners();
+
+    return true;
   }
 
   // Método para cargar eventos suscritos desde el almacenamiento local

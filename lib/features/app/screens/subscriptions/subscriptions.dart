@@ -5,6 +5,7 @@ import 'package:meetings_app/features/app/controllers/event_controller.dart';
 import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/screens/event_details/event_detail.dart';
 import 'package:meetings_app/features/app/screens/subscriptions/widgets/selector.dart';
+import 'package:meetings_app/features/app/screens/subscriptions/widgets/subscription_event_card.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
@@ -122,14 +123,17 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                 ),
           ),
           const SizedBox(height: 8),
-          Text(
-            isUpcoming
-                ? 'Suscríbete a eventos próximos para verlos aquí'
-                : 'Tus eventos pasados aparecerán aquí',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: dark ? LColors.textWhite : LColors.dark,
-                ),
-            textAlign: TextAlign.center,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              isUpcoming
+                  ? 'Suscríbete a eventos próximos para verlos aquí'
+                  : 'Tus eventos pasados aparecerán aquí',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: dark ? LColors.textWhite : LColors.dark,
+                  ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
@@ -138,11 +142,14 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
 
   Widget _buildEventsList(List<Event> events) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(
+          vertical: 8), // Padding reducido porque ya lo tiene la tarjeta
       itemCount: events.length,
       itemBuilder: (context, index) {
         final event = events[index];
-        return GestureDetector(
+        // Usando la nueva SubscriptionEventCard en lugar de StylishEventCard
+        return SubscriptionEventCard(
+          event: event,
           onTap: () {
             Navigator.push(
               context,
@@ -154,7 +161,6 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
               setState(() {});
             });
           },
-          child: StylishEventCard(event: event, isSubscribed: true),
         );
       },
     );
