@@ -3,7 +3,6 @@ import 'package:meetings_app/common/widgets/appbar/appbar.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 
 import '../../../../../utils/constants/colors.dart';
-import 'package:iconsax/iconsax.dart';
 
 class LHomeAppBar extends StatelessWidget {
   const LHomeAppBar({
@@ -20,10 +19,6 @@ class LHomeAppBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: LColors.white,
               borderRadius: BorderRadius.circular(15),
-            ),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Iconsax.notification5, color: LColors.primary,),
             ),
           ),
         ],

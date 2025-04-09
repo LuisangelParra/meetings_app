@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/common/widgets/events/cards/event_vertical_card.dart';
-import 'package:meetings_app/features/app/models/event2_model.dart';
+import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/models/track_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';

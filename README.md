@@ -1,16 +1,13 @@
-# meetings_app
+# YOUTUBE VIDEO LINK:
 
-A new Flutter project.
+[9 de abril de 2025 - YouTube](https://youtu.be/HzqbQAu1wz8?si=bSwa9rPBJBFeE6BB)
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+# Members:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Aiker Acosta
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Kairo Tapias
+
+- Luisangel Parra

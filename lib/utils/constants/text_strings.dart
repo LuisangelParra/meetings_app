@@ -20,12 +20,12 @@ class LTexts {
   static const String tContinue = "Continue";
 
   // -- OnBoarding Texts
-  static const String onBoardingTitle1 = "Find event & Schedule Planning";
+  static const String onBoardingTitle1 = "Encuentra eventos y organiza tu agenda.";
   static const String onBoardingTitle2 = "Select Payment Method";
   static const String onBoardingTitle3 = "Deliver at your door step";
 
   static const String onBoardingSubTitle1 =
-      "Something that happens or is regarded as occurence, especially one of some importance, the outcome event.";
+      "Acontecimiento que se produce y se considera relevante, especialmente cuando representa el resultado o desenlace de diversas circunstancias.";
   static const String onBoardingSubTitle2 =
       "For Seamless Transactions, Choose Your Payment Path - Your Convenience, Our Priority!";
   static const String onBoardingSubTitle3 =
@@ -80,6 +80,6 @@ class LTexts {
   static const String popularProducts = "Popular Products";
 
   // -- Home
-  static const String homeAppbarTitle = "Find the trending events";
+  static const String homeAppbarTitle = "Descubre eventos en tendencia";
   static const String homeAppbarSubTitle = "Taimoor Sikander";
 }

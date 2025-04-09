@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:meetings_app/features/app/screens/home/home.dart';
 import 'package:meetings_app/features/app/screens/calendar/calendar.dart';
+import 'package:meetings_app/features/app/screens/subscriptions/subscriptions.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -14,10 +16,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  // Las dos pestañas: home y calendario.
+  // Agregamos la nueva pestaña de Suscripciones.
   final List<Widget> _pages = const [
     HomeScreen(),
     CalendarScreen(),
+    SubscriptionsScreen(),
   ];
 
   void _onTabTapped(int index) {
@@ -43,14 +46,19 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: dark ? LColors.dark : LColors.light,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
+            icon: Icon(Iconsax.home),
+            activeIcon: Icon(Iconsax.home_2),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            activeIcon: Icon(Icons.calendar_today),
+            icon: Icon(Iconsax.calendar_1),
+            activeIcon: Icon(Iconsax.calendar),
             label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.notification), // O cualquier icono que prefieras
+            activeIcon: Icon(Iconsax.notification5),
+            label: 'Suscripciones',
           ),
         ],
       ),
