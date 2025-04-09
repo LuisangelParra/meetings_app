@@ -21,15 +21,14 @@ class PastEventHorizontalCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: 
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EventDetailScreen(event: event),
-                  ),
-                );
-              },
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventDetailScreen(event: event),
+            ),
+          );
+        },
         borderRadius: BorderRadius.circular(18),
         child: Container(
           width: double.infinity,
@@ -52,7 +51,10 @@ class PastEventHorizontalCard extends StatelessWidget {
                       // Título del evento
                       Text(
                         event.titulo,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall
+                            ?.copyWith(
                               fontSize: 16,
                               color: dark ? LColors.textWhite : LColors.dark,
                             ),
@@ -71,15 +73,17 @@ class PastEventHorizontalCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           StarRating(
-                            initialRating: 0,
-                            maxRating: 5,
+                            rating: 0.0, // Using 0.0 as default instead of null
                             onRatingChanged: (rating) {
                               // Procesar calificación
                             },
                           ),
                           Text(
                             'Califica el evento',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
                                   color: LColors.darkGrey,
                                 ),
                           ),
