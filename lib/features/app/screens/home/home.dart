@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
+
+// Importa todos tus otros archivos y widgets necesarios
 import 'package:meetings_app/common/widgets/custom_shapes/containers/primary_header_container.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/search_container.dart';
 import 'package:meetings_app/common/widgets/events/lists/past_events_list.dart';
 import 'package:meetings_app/common/widgets/texts/section_heading.dart';
 import 'package:meetings_app/features/app/models/event_model.dart';
+import 'package:meetings_app/features/app/models/track_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
+import 'package:meetings_app/features/app/repository/track_repository.dart';
 import 'package:meetings_app/features/app/screens/all_events/all_events.dart';
 import 'package:meetings_app/features/app/screens/event_details/event_detail.dart';
 import 'package:meetings_app/features/app/screens/home/widgets/home_appbar.dart';
@@ -15,6 +20,7 @@ import 'package:meetings_app/utils/constants/sizes.dart';
 import 'package:meetings_app/utils/constants/text_strings.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
+/// HomeScreen con barra de búsqueda, carrusel de tracks y listas de eventos.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -26,8 +32,8 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   bool _showSearchResults = false; // Controla si se muestran resultados de búsqueda
-  List<Event> _allEvents = [];       // Lista completa de eventos
-  List<Event> _filteredEvents = [];  // Lista filtrada por búsqueda
+  List<Event> _allEvents = []; // Lista completa de eventos
+  List<Event> _filteredEvents = []; // Lista filtrada por búsqueda
 
   // Animación para mostrar/ocultar la lista de resultados
   late AnimationController _animationController;
@@ -61,8 +67,7 @@ class _HomeScreenState extends State<HomeScreen>
         setState(() {
           _showSearchResults = true;
           _filteredEvents = _allEvents
-              .where((event) =>
-                  event.titulo.toLowerCase().contains(query))
+              .where((event) => event.titulo.toLowerCase().contains(query))
               .toList();
         });
         _animationController.forward();
@@ -71,8 +76,9 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _loadEvents() async {
-    // Carga los eventos desde el repositorio.
-    _allEvents = await EventRepository().loadDummyEvents();
+    // Carga los eventos desde el repositorio inyectado en el main
+    final eventRepo = Provider.of<EventRepository>(context, listen: false);
+    _allEvents = await eventRepo.loadDummyEvents();
     _filteredEvents = List.from(_allEvents);
     setState(() {});
   }
@@ -87,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final dark = LHelperFunctions.isDarkMode(context);
+
     return Scaffold(
       backgroundColor: dark
           ? LColors.dark.withValues(alpha: 0.95)
@@ -94,25 +101,21 @@ class _HomeScreenState extends State<HomeScreen>
       body: SizedBox(
         height: double.infinity,
         child: Stack(
-          // El Stack ocupa toda la pantalla, pero la search bar se integra en el scroll.
           fit: StackFit.expand,
           children: [
             // Contenido principal scrollable.
             SingleChildScrollView(
-              // Se asigna padding inferior para evitar que el contenido quede oculto (si se usa algún footer fijo).
               padding: const EdgeInsets.only(bottom: 120),
               child: Column(
                 children: [
-                  // Cabecera con imagen/banner del evento.
+                  // Cabecera con imagen/banner principal
                   LPrimaryHeaderContainer(
                     height: 230,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /// -- AppBar --
                         const LHomeAppBar(),
                         SizedBox(height: LSizes.sm),
-                        /// -- Header --
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: LSizes.lg * 1.5),
                           child: SizedBox(
@@ -128,8 +131,8 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  // Inserta la search bar en el Column.
-                  // Usamos Transform.translate para que se superponga parcialmente al header.
+
+                  // Barra de búsqueda
                   Transform.translate(
                     offset: const Offset(0, -50),
                     child: Padding(
@@ -143,51 +146,69 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ),
                   ),
+
+                  // Contenido adicional (transform para superponerlo al header).
                   Transform.translate(
                     offset: const Offset(0, -50),
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: LSizes.lg * 1.5),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Popular events list
-                              LSectionHeading(
-                                title: "Próximos Eventos",
-                                textColor: dark ? LColors.textWhite : LColors.dark,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AllEventsScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const LEventCarousel(),
-                              SizedBox(height: LSizes.sm),
-                              LSectionHeading(
-                                title: "Eventos pasados",
-                                textColor: dark ? LColors.textWhite : LColors.dark,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AllEventsScreen(defaultFilter: EventDateFilter.past,),
-                                    ),
-                                  );
-                                },
-                              ),
-                              SizedBox(height: LSizes.sm),
-                              const LPastEventList(),
-                          
-                            ],
+                          // Sección: Tus tracks (carousel)
+                          const SizedBox(height: 16),
+                          LSectionHeading(
+                            title: "Categorías",
+                            textColor: dark ? LColors.textWhite : LColors.dark,
+                            showActionButton: false,
                           ),
+                          const SizedBox(height: 8),
+                          _buildTrackCarousel(context, dark),
+                          SizedBox(height: LSizes.sm),
+
+                          // Próximos eventos
+                          LSectionHeading(
+                            title: "Próximos Eventos",
+                            textColor: dark ? LColors.textWhite : LColors.dark,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AllEventsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          const LEventCarousel(),
+                          SizedBox(height: LSizes.sm),
+
+                          // Eventos pasados
+                          LSectionHeading(
+                            title: "Eventos pasados",
+                            textColor: dark ? LColors.textWhite : LColors.dark,
+                            onPressed: () {
+                              // Ir a pantalla con filtro "past" por defecto
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AllEventsScreen(
+                                    defaultFilter: EventDateFilter.past,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: LSizes.sm),
+                          const LPastEventList(),
+                        ],
+                      ),
                     ),
                   ),
-                  
                 ],
               ),
             ),
-            // Resultados de búsqueda (fijos dentro del SingleChildScrollView)
+
+            // Resultados de búsqueda con animación fade
             Positioned(
               top: 244,
               left: 0,
@@ -221,7 +242,6 @@ class _HomeScreenState extends State<HomeScreen>
       itemCount: _filteredEvents.length,
       itemBuilder: (context, index) {
         final event = _filteredEvents[index];
-        // Determinar si el evento es pasado.
         final isPast = event.fecha.isBefore(DateTime.now());
         return ListTile(
           title: Text(event.titulo),
@@ -242,16 +262,80 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           leading: const Icon(Iconsax.calendar_1),
           onTap: () {
-            // Navega a los detalles del evento.
+            // Navega a detalles del evento
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => EventDetailScreen(event: event),
-              ),
+              MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
             );
           },
         );
       },
+    );
+  }
+
+  /// Construye un carrusel horizontal de tracks, obtenidos del TrackRepository.
+  Widget _buildTrackCarousel(BuildContext context, bool dark) {
+    final trackRepo = Provider.of<TrackRepository>(context, listen: false);
+    return FutureBuilder<List<Track>>(
+      future: trackRepo.loadDummyTracks(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 70,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (snapshot.hasData) {
+          final tracks = snapshot.data!;
+          if (tracks.isEmpty) {
+            return const Text("No tracks available");
+          }
+          return SizedBox(
+            height: 90, // Ajusta según tu diseño
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: tracks.length,
+              itemBuilder: (context, index) {
+                final track = tracks[index];
+                return _buildTrackCard(context, track, dark);
+              },
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  /// Construye la card individual de un track
+  Widget _buildTrackCard(BuildContext context, Track track, bool dark) {
+    return GestureDetector(
+      onTap: () {
+        // Navega a AllEventsScreen con trackName
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AllEventsScreen(trackName: track.nombre),
+          ),
+        );
+      },
+      child: Container(
+        width: 120,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: dark ? LColors.accent2 : LColors.primary,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          track.nombre,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: LColors.textWhite, fontWeight: FontWeight.w500),
+        ),
+      ),
     );
   }
 }

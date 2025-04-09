@@ -18,6 +18,33 @@ class OnBoardingPage extends StatelessWidget {
     return Expanded(
       child: Stack(
         children: [
+          
+          // Circular background
+          Positioned(
+            top: -240,
+            left: -400,
+            child: LCircularContainer(width: 600, height: 600, radius: 600, backgraundColor: LColors.accent4),
+          ),
+          Positioned(
+            top: -150,
+            right: -120,
+            child: LCircularContainer(backgraundColor: LColors.accent,),
+          ),
+          Positioned(
+            top: 195,
+            right: 80,
+            child: LCircularContainer(width: 100, height: 100, radius: 100, backgraundColor: LColors.secondary),
+          ),
+          Positioned(
+            bottom: -180,
+            left: 150,
+            child: LCircularContainer(width: 400, height: 400, radius: 200, backgraundColor: LColors.accent),
+          ),
+          Positioned(
+            bottom: -100,
+            left: -150,
+            child: LCircularContainer(width: 400, height: 400, radius: 400, backgraundColor: LColors.secondary),
+          ),
           Padding(
             padding: const EdgeInsets.all(LSizes.defaultSpace*3),
             child: Column(
@@ -73,33 +100,6 @@ class OnBoardingPage extends StatelessWidget {
               ],
             ),
           ),
-          // Circular background
-          Positioned(
-            top: -240,
-            left: -400,
-            child: LCircularContainer(width: 600, height: 600, radius: 600, backgraundColor: LColors.accent4),
-          ),
-          Positioned(
-            top: -150,
-            right: -120,
-            child: LCircularContainer(backgraundColor: LColors.accent,),
-          ),
-          Positioned(
-            top: 195,
-            right: 80,
-            child: LCircularContainer(width: 100, height: 100, radius: 100, backgraundColor: LColors.secondary),
-          ),
-          Positioned(
-            bottom: -180,
-            left: 150,
-            child: LCircularContainer(width: 400, height: 400, radius: 200, backgraundColor: LColors.accent),
-          ),
-          Positioned(
-            bottom: -100,
-            left: -150,
-            child: LCircularContainer(width: 400, height: 400, radius: 400, backgraundColor: LColors.secondary),
-          ),
-        
         ] 
       ),
     );
