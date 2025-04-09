@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meetings_app/features/app/screens/calendar/widgets/event_list.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:meetings_app/features/app/models/event2_model.dart';
@@ -35,7 +36,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar'),
+        title: const Text('Calendario'),
         backgroundColor: dark ? LColors.dark : LColors.light,
       ),
       backgroundColor:
@@ -87,39 +88,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           const SizedBox(height: 16),
           // Mostrar la descripción o lista de eventos para el día seleccionado.
           Expanded(
-            child: _buildEventsList(calendarController),
+            child: CalendarEventList(selectedDay: _selectedDay, controller: calendarController),
           ),
         ],
       ),
     );
   }
-
-  Widget _buildEventsList(CalendarController controller) {
-    final events = controller.getEventsForDay(_selectedDay);
-    if (events.isEmpty) {
-      return const Center(
-        child: Text('No hay eventos para esta fecha'),
-      );
-    }
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: events.length,
-      itemBuilder: (context, index) {
-        final eventTitle = events[index].titulo;
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: ListTile(
-            title: Text(eventTitle),
-            subtitle: Text(
-              'Evento para ${_selectedDay.day}/${_selectedDay.month}/${_selectedDay.year}',
-            ),
-            leading: const Icon(Icons.event),
-          ),
-        );
-      },
-    );
-  }
 }
+
