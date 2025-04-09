@@ -95,7 +95,7 @@ class PastEventHorizontalCard extends StatelessWidget {
               ),
               // Imagen en la parte derecha sin Padding para que coincida con el borde
               SizedBox(
-                width: 150, // Puedes ajustar el ancho según tu diseño
+                width: 120, // Puedes ajustar el ancho según tu diseño
                 height: double.infinity,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(

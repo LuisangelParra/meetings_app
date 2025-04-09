@@ -21,10 +21,6 @@ class LHomeAppBar extends StatelessWidget {
               color: LColors.white,
               borderRadius: BorderRadius.circular(15),
             ),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Iconsax.notification5, color: LColors.primary,),
-            ),
           ),
         ],
       ),

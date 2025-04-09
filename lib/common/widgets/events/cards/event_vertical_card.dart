@@ -71,11 +71,7 @@ class LEventVerticalCard extends StatelessWidget {
                     ),
                   ),
                   // Botón circular que cambia de icono al presionarse
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: AlertToggleButton(title: title),
-                  ),
+                  //Positioned( top: 10, right: 10, child: AlertToggleButton(title: title),),
                 ],
               ),
               Padding(

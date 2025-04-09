@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/primary_header_container.dart';
 import 'package:meetings_app/common/widgets/custom_shapes/containers/search_container.dart';
-import 'package:meetings_app/common/widgets/events/lists/events_list.dart';
 import 'package:meetings_app/common/widgets/events/lists/past_events_list.dart';
 import 'package:meetings_app/common/widgets/texts/section_heading.dart';
 import 'package:meetings_app/features/app/models/event2_model.dart';
@@ -92,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen>
       backgroundColor: dark
           ? LColors.dark.withValues(alpha: 0.95)
           : LColors.light.withValues(alpha: 0.95),
-      body: Container(
+      body: SizedBox(
         height: double.infinity,
         child: Stack(
           // El Stack ocupa toda la pantalla, pero la search bar se integra en el scroll.
@@ -158,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AllEventsScreen(listWidget: const LEventList()),
+                                      builder: (context) => AllEventsScreen(),
                                     ),
                                   );
                                 },
@@ -172,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AllEventsScreen(listWidget: const LEventList()),
+                                      builder: (context) => AllEventsScreen(defaultFilter: EventDateFilter.past,),
                                     ),
                                   );
                                 },

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
-import 'package:get/get.dart';
+import 'package:meetings_app/features/app/repository/track_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:meetings_app/app.dart';
 import 'package:meetings_app/features/app/controllers/event_controller.dart';
@@ -17,6 +17,8 @@ void main() async {
     // Wrap with MultiProvider to make controllers available throughout the app
     MultiProvider(
       providers: [
+        Provider<TrackRepository>(create: (_) => TrackRepository()),
+
         Provider<EventRepository>(create: (_) => EventRepository()),
         // Add EventController provider
         ChangeNotifierProvider(

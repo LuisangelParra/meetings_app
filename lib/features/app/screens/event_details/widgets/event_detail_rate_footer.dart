@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meetings_app/common/widgets/events/rate/star_rating.dart';
 import 'package:meetings_app/features/app/models/event2_model.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 
