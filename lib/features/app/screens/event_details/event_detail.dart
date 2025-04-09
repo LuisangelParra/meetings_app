@@ -27,14 +27,11 @@ class EventDetailScreen extends StatefulWidget {
 class _EventDetailScreenState extends State<EventDetailScreen> {
   // Flag para controlar si el usuario ha enviado un comentario
   bool hasSubmittedComment = false;
-  // Flag para controlar si el formulario de comentarios está visible
-  bool showAddCommentForm = false;
 
   // Método para actualizar el estado cuando se envía un comentario
   void onCommentSubmitted() {
     setState(() {
       hasSubmittedComment = true;
-      showAddCommentForm = false;
     });
   }
 
@@ -58,13 +55,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Importante para que se ajuste al contenido
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context)
-              .viewInsets
-              .bottom, // Ajuste para el teclado
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         decoration: const BoxDecoration(
           color: Colors.transparent,
@@ -73,11 +68,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           child: AddCommentSection(
             eventId: widget.event.id,
             onCommentSubmitted: () {
-              Navigator.pop(context); // Cerrar el modal
-              onCommentSubmitted(); // Actualizar el estado
+              Navigator.pop(context);
+              onCommentSubmitted();
             },
-            isModal:
-                true, // Parámetro para indicar que se está mostrando en un modal
+            isModal: true,
           ),
         ),
       ),
@@ -86,11 +80,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Access the EventController con listen: true para reconstruir cuando cambien los datos
     final eventController = Provider.of<EventController>(context, listen: true);
     final dark = LHelperFunctions.isDarkMode(context);
 
-    // Calcular si el evento es pasado o futuro.
+    // Calcular si el evento es pasado o futuro
     final now = DateTime.now();
     final isPastEvent = widget.event.fecha.isBefore(now);
 
@@ -107,7 +100,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       backgroundColor: dark
           ? LColors.dark.withValues(alpha: 0.95)
           : LColors.light.withValues(alpha: 0.95),
-      // Botón de acción flotante para añadir comentarios (solo para eventos pasados)
+      // Solo mantener el botón flotante para añadir comentarios
       floatingActionButton: isPastEvent && !userHasCommented
           ? FloatingActionButton.extended(
               onPressed: _showAddCommentModal,
@@ -267,10 +260,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 Row(
                                   children: [
                                     FutureBuilder<List<Track>>(
-                                      // ...existing code...
                                       future:
                                           TrackRepository().loadDummyTracks(),
                                       builder: (context, snapshot) {
+                                        // ...existing code...
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
                                           return const SizedBox(
@@ -443,35 +436,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               ),
                             ),
 
-                          // Botón para mostrar el formulario de comentarios (solo para eventos pasados)
-                          if (isPastEvent &&
-                              !userHasCommented &&
-                              !showAddCommentForm)
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: LSizes.md),
-                              child: ElevatedButton.icon(
-                                onPressed: _showAddCommentModal,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: LColors.primary,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                ),
-                                icon: const Icon(Icons.rate_review,
-                                    color: Colors.white),
-                                label: Text(
-                                  'Dar mi opinión',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(
-                                        color: LColors.textWhite,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ),
-                            ),
+                          // Eliminado: Botón adicional para mostrar el formulario de comentarios
                         ],
                       ),
                     ),
