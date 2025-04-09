@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:meetings_app/features/app/models/event2_model.dart';
 import 'package:meetings_app/common/widgets/events/cards/past_event_horizontal_card.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
@@ -8,8 +9,9 @@ class LPastEventList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final eventRepo = Provider.of<EventRepository>(context, listen: false);
     return FutureBuilder<List<Event>>(
-      future: EventRepository().loadDummyEvents(),
+      future: eventRepo.loadDummyEvents(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -25,10 +27,10 @@ class LPastEventList extends StatelessWidget {
           ).toList();
 
           // Toma los primeros 6 eventos que cumplen la condición
-          final List<Event> firstTenPastEvents = pastEvents.take(6).toList();
+          final List<Event> firstSixPastEvents = pastEvents.take(6).toList();
 
           return Column(
-            children: firstTenPastEvents
+            children: firstSixPastEvents
                 .map((event) => PastEventHorizontalCard(event: event))
                 .toList(),
           );
