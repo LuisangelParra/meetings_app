@@ -2,8 +2,21 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/models/track_model.dart';
+import '../data/remote/i_remote_event_source.dart';
+import '../data/remote/remote_event_source.dart';
 
 class EventRepository {
+  final IRemoteEventSource _remote;
+  
+  EventRepository({IRemoteEventSource? remote})
+      : _remote = remote ?? RemoteEventSource();
+  
+  Future<List<Event>> loadEvents() => _remote.getAllEvents();
+  Future<Event> getEvent(int id) => _remote.getEventById(id);
+  Future<bool> saveEvent(Event e) =>
+      e.id == 0 ? _remote.addEvent(e) : _remote.updateEvent(e);
+  Future<bool> deleteEvent(int id) => _remote.deleteEvent(id);
+
   Future<List<Event>> loadDummyEvents() async {
     // Carga el archivo JSON como String
     final String jsonString =
