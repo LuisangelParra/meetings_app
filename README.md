@@ -10,7 +10,7 @@
 
 ## Third Video for 1-2
 
-[7 de Mayo de 2025 - YouTube](https://youtu.be/AuPW7zw4u2M?si=x-jh-5Jaq2haz2SL)
+[7 de Mayo de 2025 - YouTube](https://www.youtube.com/watch?v=vqrx1ZscvAo)
 
 # Members:
 
