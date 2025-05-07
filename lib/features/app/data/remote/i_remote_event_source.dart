@@ -8,4 +8,5 @@ abstract class IRemoteEventSource {
   Future<bool> addEvent(Event event);
   Future<bool> updateEvent(Event event);
   Future<bool> deleteEvent(int id);
+  Future<DateTime?> getLastUpdated();
 }

@@ -41,8 +41,8 @@ class RemoteTrackSource implements IRemoteTrackSource {
 
   @override
   Future<bool> updateTrack(Track track) async {
-    // En lugar de toJsonNoName(), usamos toJson() completo.
-    final uri = Uri.parse('$baseUrl/$contractKey/data/$table/update/${track.nombre}');
+    final uri =
+        Uri.parse('$baseUrl/$contractKey/data/$table/update/${track.nombre}');
     final resp = await httpClient.put(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -59,5 +59,25 @@ class RemoteTrackSource implements IRemoteTrackSource {
       headers: {'Content-Type': 'application/json'},
     );
     return resp.statusCode == 200;
+  }
+
+  @override
+  Future<DateTime?> getLastUpdated() async {
+    final uri =
+        Uri.parse('$baseUrl/$contractKey/data/$table/metadata?format=json');
+    try {
+      final resp = await httpClient.get(uri);
+      if (resp.statusCode != 200) {
+        return null;
+      }
+      final data = jsonDecode(resp.body);
+      if (data != null && data.containsKey('last_updated')) {
+        return DateTime.parse(data['last_updated']);
+      }
+      return null;
+    } catch (e) {
+      logError('Error fetching last updated timestamp: $e');
+      return null;
+    }
   }
 }

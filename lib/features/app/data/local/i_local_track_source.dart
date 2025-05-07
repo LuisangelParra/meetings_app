@@ -1,11 +1,12 @@
-// lib/features/app/data/remote/i_remote_track_source.dart
+import '../../models/track_model.dart';
 
-import 'package:meetings_app/features/app/models/track_model.dart';
-
-abstract class IRemoteTrackSource {
+abstract class ILocalTrackSource {
   Future<List<Track>> getAllTracks();
   Future<bool> addTrack(Track track);
   Future<bool> updateTrack(Track track);
   Future<bool> deleteTrack(String nombre);
+  Future<void> saveAllTracks(List<Track> tracks);
   Future<DateTime?> getLastUpdated();
+  Future<void> setLastUpdated(DateTime dateTime);
+  Future<void> clear();
 }

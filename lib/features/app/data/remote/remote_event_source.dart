@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:loggy/loggy.dart';
 import '../../models/event_model.dart';
 import 'i_remote_event_source.dart';
 
@@ -19,19 +20,23 @@ class RemoteEventSource implements IRemoteEventSource {
     final uri = Uri.parse('$baseUrl/$contractKey/data/$table/all?format=json');
     final resp = await httpClient.get(uri);
     if (resp.statusCode != 200) {
-      return Future.error('Error ${resp.statusCode}');
+      logError('Error fetching events: ${resp.statusCode}');
+      return Future.error('Status ${resp.statusCode}');
     }
-    final data = jsonDecode(resp.body)['data'] as List;
+    final data = (jsonDecode(resp.body)['data'] as List);
     return data.map((j) => Event.fromJson(j)).toList();
   }
 
   @override
   Future<Event> getEventById(int id) async {
-    final uri = Uri.parse('$baseUrl/$contractKey/data/$table/read/$id?format=json');
+    final uri = Uri.parse('$baseUrl/$contractKey/data/$table/$id?format=json');
     final resp = await httpClient.get(uri);
-    if (resp.statusCode != 200) throw Exception('Evento no encontrado');
-    final rec = jsonDecode(resp.body)['data'];
-    return Event.fromJson(rec);
+    if (resp.statusCode != 200) {
+      logError('Error fetching event: ${resp.statusCode}');
+      return Future.error('Status ${resp.statusCode}');
+    }
+    final data = jsonDecode(resp.body)['data'];
+    return Event.fromJson(data);
   }
 
   @override
@@ -47,7 +52,8 @@ class RemoteEventSource implements IRemoteEventSource {
 
   @override
   Future<bool> updateEvent(Event event) async {
-    final uri = Uri.parse('$baseUrl/$contractKey/data/$table/update/${event.id}');
+    final uri =
+        Uri.parse('$baseUrl/$contractKey/data/$table/update/${event.id}');
     final resp = await httpClient.put(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -59,7 +65,30 @@ class RemoteEventSource implements IRemoteEventSource {
   @override
   Future<bool> deleteEvent(int id) async {
     final uri = Uri.parse('$baseUrl/$contractKey/data/$table/delete/$id');
-    final resp = await httpClient.delete(uri);
+    final resp = await httpClient.delete(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+    );
     return resp.statusCode == 200;
+  }
+
+  @override
+  Future<DateTime?> getLastUpdated() async {
+    final uri =
+        Uri.parse('$baseUrl/$contractKey/data/$table/metadata?format=json');
+    try {
+      final resp = await httpClient.get(uri);
+      if (resp.statusCode != 200) {
+        return null;
+      }
+      final data = jsonDecode(resp.body);
+      if (data != null && data.containsKey('last_updated')) {
+        return DateTime.parse(data['last_updated']);
+      }
+      return null;
+    } catch (e) {
+      logError('Error fetching last updated timestamp: $e');
+      return null;
+    }
   }
 }
