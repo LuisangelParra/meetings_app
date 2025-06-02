@@ -26,50 +26,110 @@ class EventRepository {
   // Smart data loading with sync check
   Future<List<Event>> loadEvents() async {
     try {
+      print("=== EventRepository.loadEvents() STARTED ===");
+      logInfo("Starting loadEvents()");
+      
       // First, try to load from local cache
       List<Event> localEvents = await _local.getAllEvents();
+      print("Local events loaded: ${localEvents.length}");
+      logInfo("Loaded ${localEvents.length} events from local cache");
 
       // Check if we have connectivity
       var connectivityResult = await _connectivity.checkConnectivity();
       bool isConnected = connectivityResult != ConnectivityResult.none;
+      print("Connected: $isConnected");
+      logInfo("Connectivity status: $isConnected ($connectivityResult)");
 
       if (isConnected) {
         // Check if we need to sync data
         bool shouldSync = await _shouldSyncData();
+        print("Should sync: $shouldSync");
+        logInfo("Should sync: $shouldSync, Local events empty: ${localEvents.isEmpty}");
 
-        if (shouldSync || localEvents.isEmpty) {
+        // TEMPORARY: Force sync to always load fresh data from API during development
+        bool forceSync = true; // Set to false in production
+        print("Force sync: $forceSync");
+        logInfo("Force sync enabled: $forceSync");
+
+        if (shouldSync || localEvents.isEmpty || forceSync) {
           // Get data from remote source
+          print("=== CALLING REMOTE SOURCE ===");
           logInfo("Syncing events from remote source");
           List<Event> remoteEvents = await _remote.getAllEvents();
+          print("Remote events received: ${remoteEvents.length}");
+          logInfo("Retrieved ${remoteEvents.length} events from remote source");
 
-          // Save to local database
-          await _local.saveAllEvents(remoteEvents);
-          await _local.setLastUpdated(DateTime.now());
+          // Check specifically for chocolate event in remote data
+          final chocolateEvents = remoteEvents.where((event) => 
+            event.titulo.toLowerCase().contains('chocolate')
+          ).toList();
+          print("Chocolate events found: ${chocolateEvents.length}");
+          logInfo("Chocolate events in remote data: ${chocolateEvents.length}");
 
+          // TEMPORARY: Skip saving to Hive to avoid key issues
+          // TODO: Fix Hive model compatibility later
+          /*
+          try {
+            // Save to local database
+            await _local.saveAllEvents(remoteEvents);
+            await _local.setLastUpdated(DateTime.now());
+            print("Events saved to local cache");
+            logInfo("Saved ${remoteEvents.length} events to local cache");
+          } catch (e) {
+            print("Warning: Could not save to local cache: $e");
+            logError("Warning: Could not save to local cache: $e");
+          }
+          */
+
+          print("=== RETURNING REMOTE EVENTS ===");
           return remoteEvents;
+        } else {
+          print("Using cached events");
+          logInfo("Using cached local events (no sync needed)");
         }
+      } else {
+        print("No connectivity - using cache");
+        logInfo("No connectivity - using local cache");
       }
 
       // If we have local data or couldn't sync, return local data
+      print("Returning local events: ${localEvents.length}");
+      logInfo("Returning ${localEvents.length} local events");
       return localEvents;
     } catch (e) {
+      print("ERROR in loadEvents: $e");
       logError('Error loading events: $e');
       // If there's an error, try to return local data as fallback
-      return _local.getAllEvents();
+      final fallbackEvents = await _local.getAllEvents();
+      print("Fallback events: ${fallbackEvents.length}");
+      logInfo("Fallback: returning ${fallbackEvents.length} local events due to error");
+      return fallbackEvents;
     }
   }
 
   // Check if we need to sync data based on last update times
   Future<bool> _shouldSyncData() async {
     try {
+      logInfo("Checking if sync is needed...");
       DateTime? localLastUpdated = await _local.getLastUpdated();
       DateTime? remoteLastUpdated = await _remote.getLastUpdated();
 
-      // If we don't have local data or remote is newer, we should sync
-      if (localLastUpdated == null) return true;
-      if (remoteLastUpdated == null) return false;
+      logInfo("Local last updated: $localLastUpdated");
+      logInfo("Remote last updated: $remoteLastUpdated");
 
-      return remoteLastUpdated.isAfter(localLastUpdated);
+      // If we don't have local data or remote is newer, we should sync
+      if (localLastUpdated == null) {
+        logInfo("No local timestamp found - sync needed");
+        return true;
+      }
+      if (remoteLastUpdated == null) {
+        logInfo("No remote timestamp found - sync not needed");
+        return false;
+      }
+
+      bool shouldSync = remoteLastUpdated.isAfter(localLastUpdated);
+      logInfo("Remote is newer: $shouldSync");
+      return shouldSync;
     } catch (e) {
       logError('Error checking sync status: $e');
       return false;
@@ -162,24 +222,43 @@ class EventRepository {
     }
   }
 
-  // Load dummy events for testing or initial data
+  // Load events - try API first, fallback to local JSON
   Future<List<Event>> loadDummyEvents() async {
-    // Carga el archivo JSON como String
-    final String jsonString =
-        await rootBundle.loadString('assets/data/events.json');
+    try {
+      // Check connectivity first
+      var connectivityResult = await _connectivity.checkConnectivity();
+      bool isConnected = connectivityResult != ConnectivityResult.none;
 
-    // Convierta el String en la estructura deseada
-    final dynamic jsonResponse = json.decode(jsonString);
+      if (isConnected) {
+        try {
+          // Try to load from API
+          logInfo("Loading events from API");
+          return await _remote.getAllEvents();
+        } catch (e) {
+          logError("Failed to load from API, falling back to local data: $e");
+          // Fall through to load from JSON
+        }
+      }
 
-    // Verifica si se está utilizando la nueva estructura con la clave "eventos".
-    if (jsonResponse is Map<String, dynamic> &&
-        jsonResponse.containsKey('eventos')) {
-      final List<dynamic> eventsJson = jsonResponse['eventos'];
-      return eventsJson.map((data) => Event.fromJson(data)).toList();
-    } else if (jsonResponse is List) {
-      // Compatibilidad con la estructura anterior (lista de eventos).
-      return jsonResponse.map((data) => Event.fromJson(data)).toList();
-    } else {
+      // Load from local JSON file as fallback
+      logInfo("Loading events from local JSON file");
+      final String jsonString =
+          await rootBundle.loadString('assets/data/events.json');
+      final dynamic jsonResponse = json.decode(jsonString);
+
+      // Handle new structure with "eventos" key
+      if (jsonResponse is Map<String, dynamic> &&
+          jsonResponse.containsKey('eventos')) {
+        final List<dynamic> eventsJson = jsonResponse['eventos'];
+        return eventsJson.map((data) => Event.fromJson(data)).toList();
+      } else if (jsonResponse is List) {
+        // Compatibility with old structure (list of events)
+        return jsonResponse.map((data) => Event.fromJson(data)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      logError('Error loading events: $e');
       return [];
     }
   }

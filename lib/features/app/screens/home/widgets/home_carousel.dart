@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meetings_app/common/widgets/events/cards/event_vertical_card.dart';
 import 'package:meetings_app/features/app/models/event_model.dart';
-import 'package:meetings_app/features/app/models/track_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
 import 'package:meetings_app/utils/constants/sizes.dart';
 
@@ -11,7 +10,7 @@ class LEventCarousel extends StatelessWidget {
   final String image = 'assets/images/event.jpg'; // URL de la imagen
 
   Future<Map<String, dynamic>> _loadData() async {
-    final events = await EventRepository().loadDummyEvents();
+    final events = await EventRepository().loadEvents();
     final tracks = await EventRepository().loadDummyTracks();
     return {'events': events, 'tracks': tracks};
   }
@@ -32,9 +31,8 @@ class LEventCarousel extends StatelessWidget {
             );
           }
           if (snapshot.hasData) {
-            // Se obtienen la lista de eventos y de tracks desde el Future.
+            // Se obtienen la lista de eventos desde el Future.
             final List<Event> events = snapshot.data!['events'];
-            final List<Track> tracks = snapshot.data!['tracks'];
             // Toma solo los primeros 5 eventos.
             final List<Event> firstFiveEvents = events.take(5).toList();
             return SingleChildScrollView(
@@ -43,19 +41,17 @@ class LEventCarousel extends StatelessWidget {
                 children: [
                   SizedBox(width: LSizes.lg * 1.5), // Margen izquierdo
                   ...firstFiveEvents.map((event) {
-                    // Para cada evento obtenemos los nombres de los tracks en los que aparece,
-                    // limitando a los dos primeros.
-                    List<String> eventTracks = tracks
-                        .where((track) => track.eventos.contains(event.id))
-                        .map((t) => t.nombre)
-                        .take(2)
-                        .toList();
+                    // Use the trackNames from the event directly
+                    List<String> eventTracks =
+                        event.trackNames.take(2).toList();
                     return Padding(
                       padding: const EdgeInsets.only(right: LSizes.lg),
                       child: LEventVerticalCard(
                         image: image,
                         title: event.titulo,
-                        location: event.lugar,
+                        location: event.trackNames.isNotEmpty
+                            ? event.trackNames.join(', ')
+                            : 'Track no especificado',
                         date: event.fecha,
                         tracks: eventTracks,
                         event: event,

@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadEvents() async {
     final eventRepo = Provider.of<EventRepository>(context, listen: false);
-    _allEvents = await eventRepo.loadDummyEvents();
+    _allEvents = await eventRepo.loadEvents();
     setState(() {});
   }
 

@@ -1,83 +1,87 @@
 // lib/features/app/data/remote/remote_track_source.dart
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:loggy/loggy.dart';
-
 import '../../models/track_model.dart';
+import '../../services/api_service.dart';
+import '../../../../utils/constants/api_constants.dart';
 import 'i_remote_track_source.dart';
 
-class RemoteTrackSource implements IRemoteTrackSource {
-  final http.Client httpClient;
-  final String contractKey = 'LFARIA_CONTRACT_MOVIL_PROJECT';
-  final String baseUrl = 'https://unidb.openlab.uninorte.edu.co';
-  final String table = 'tracks';
+class RemoteTrackSource with UiLoggy implements IRemoteTrackSource {
+  final ApiService _apiService;
 
-  RemoteTrackSource({http.Client? client})
-      : httpClient = client ?? http.Client();
+  RemoteTrackSource({ApiService? apiService})
+      : _apiService = apiService ?? ApiService();
 
   @override
   Future<List<Track>> getAllTracks() async {
-    final uri = Uri.parse('$baseUrl/$contractKey/data/$table/all?format=json');
-    final resp = await httpClient.get(uri);
-    if (resp.statusCode != 200) {
-      logError('Error fetching tracks: ${resp.statusCode}');
-      return Future.error('Status ${resp.statusCode}');
+    try {
+      loggy.info('Fetching all tracks from API');
+      final data = await _apiService.getAllData(ApiConstants.tracksTable);
+      return data.map((json) => Track.fromJson(json)).toList();
+    } catch (e) {
+      loggy.error('Error fetching tracks: $e');
+      rethrow;
     }
-    final data = (jsonDecode(resp.body)['data'] as List);
-    return data.map((j) => Track.fromJson(j)).toList();
   }
 
   @override
   Future<bool> addTrack(Track track) async {
-    final uri = Uri.parse('$baseUrl/$contractKey/data/store');
-    final resp = await httpClient.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'table_name': table, 'data': track.toJson()}),
-    );
-    return resp.statusCode == 201;
+    try {
+      loggy.info('Creating new track: ${track.nombre}');
+      await _apiService.createData(ApiConstants.tracksTable, track.toJson());
+      return true;
+    } catch (e) {
+      loggy.error('Error creating track: $e');
+      return false;
+    }
   }
 
   @override
   Future<bool> updateTrack(Track track) async {
-    final uri =
-        Uri.parse('$baseUrl/$contractKey/data/$table/update/${track.nombre}');
-    final resp = await httpClient.put(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'data': track.toJson()}),
-    );
-    return resp.statusCode == 200;
+    try {
+      if (track.id == null) {
+        throw Exception('Track ID is required for update');
+      }
+
+      loggy.info('Updating track with ID: ${track.id}');
+      await _apiService.updateData(
+        ApiConstants.tracksTable,
+        track.id!,
+        track.toJson(),
+      );
+      return true;
+    } catch (e) {
+      loggy.error('Error updating track: $e');
+      return false;
+    }
   }
 
   @override
   Future<bool> deleteTrack(String nombre) async {
-    final uri = Uri.parse('$baseUrl/$contractKey/data/$table/delete/$nombre');
-    final resp = await httpClient.delete(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-    );
-    return resp.statusCode == 200;
+    try {
+      // First find the track by name to get its ID
+      final tracks = await getAllTracks();
+      final track = tracks.firstWhere(
+        (t) => t.nombre == nombre,
+        orElse: () => throw Exception('Track not found'),
+      );
+
+      if (track.id == null) {
+        throw Exception('Track ID is null');
+      }
+
+      loggy.info('Deleting track: $nombre (ID: ${track.id})');
+      return await _apiService.deleteData(ApiConstants.tracksTable, track.id!);
+    } catch (e) {
+      loggy.error('Error deleting track: $e');
+      return false;
+    }
   }
 
   @override
   Future<DateTime?> getLastUpdated() async {
-    final uri =
-        Uri.parse('$baseUrl/$contractKey/data/$table/metadata?format=json');
-    try {
-      final resp = await httpClient.get(uri);
-      if (resp.statusCode != 200) {
-        return null;
-      }
-      final data = jsonDecode(resp.body);
-      if (data != null && data.containsKey('last_updated')) {
-        return DateTime.parse(data['last_updated']);
-      }
-      return null;
-    } catch (e) {
-      logError('Error fetching last updated timestamp: $e');
-      return null;
-    }
+    // For this implementation, we'll return the current time
+    // In a real scenario, you might want to store this in the database
+    return DateTime.now();
   }
 }

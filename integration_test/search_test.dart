@@ -26,7 +26,7 @@ void main() {
       expect(find.byType(SearchScreen), findsOneWidget);
 
       // Initially should show empty state with search icon
-      expect(find.byIcon(Icons.search_normal), findsOneWidget);
+      expect(find.byIcon(Icons.search), findsOneWidget);
       expect(find.text('Busca eventos por título'), findsOneWidget);
 
       // Enter search text

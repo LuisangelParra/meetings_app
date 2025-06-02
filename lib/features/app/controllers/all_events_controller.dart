@@ -15,7 +15,7 @@ class AllEventsController extends ChangeNotifier {
   List<Event> _allEvents = [];
   // Lista final ya filtrada, que la UI mostrará.
   List<Event> filteredEvents = [];
-  
+
   // Filtro seleccionado
   EventDateFilter selectedFilter = EventDateFilter.all;
 
@@ -30,9 +30,9 @@ class AllEventsController extends ChangeNotifier {
 
   // Carga inicial de los eventos.
   Future<void> loadEvents() async {
-    final all = await eventRepo.loadDummyEvents();
+    final all = await eventRepo.loadEvents();
     _allEvents = all;
-    applyFilters(); 
+    applyFilters();
   }
 
   // Cambia el filtro seleccionado y vuelve a filtrar.
@@ -51,7 +51,8 @@ class AllEventsController extends ChangeNotifier {
   Future<void> applyFilters() async {
     // Primero filtrar por track
     final trackList = await trackRepo.loadDummyTracks();
-    List<Event> filteredByTrack = _filterByTrack(_allEvents, trackList, trackName);
+    List<Event> filteredByTrack =
+        _filterByTrack(_allEvents, trackList, trackName);
     // Luego filtrar por fecha
     filteredEvents = _applyDateFilter(filteredByTrack, selectedFilter);
     notifyListeners();
@@ -61,15 +62,14 @@ class AllEventsController extends ChangeNotifier {
   int get eventCount => filteredEvents.length;
 
   /// Filtra los eventos según el trackName (si no es null).
-  List<Event> _filterByTrack(List<Event> events, List<Track> tracks, String? trackName) {
+  List<Event> _filterByTrack(
+      List<Event> events, List<Track> tracks, String? trackName) {
     if (trackName == null) return events; // Mostrar todos
-    // Encuentra el track (ignorando mayúsculas)
-    final targetTrack = tracks.firstWhere(
-      (t) => t.nombre.toLowerCase() == trackName.toLowerCase(),
-      orElse: () => Track(nombre: trackName, eventos: []),
-    );
-    // Quedarse solo con eventos cuyos IDs estén en targetTrack.eventos.
-    return events.where((e) => targetTrack.eventos.contains(e.id)).toList();
+    // Filter events by trackNames field (since Track no longer has eventos field)
+    return events
+        .where((event) => event.trackNames
+            .any((name) => name.toLowerCase() == trackName.toLowerCase()))
+        .toList();
   }
 
   /// Filtra los eventos según el filtro seleccionado.
@@ -78,24 +78,27 @@ class AllEventsController extends ChangeNotifier {
     switch (filter) {
       case EventDateFilter.thisWeek:
         final oneWeekLater = now.add(const Duration(days: 7));
-        return events.where((e) => e.fecha.isAfter(now) && e.fecha.isBefore(oneWeekLater)).toList();
+        return events
+            .where(
+                (e) => e.fecha.isAfter(now) && e.fecha.isBefore(oneWeekLater))
+            .toList();
       case EventDateFilter.thisMonth:
-        return events.where((e) => 
-          e.fecha.year == now.year && 
-          e.fecha.month == now.month && 
-          e.fecha.isAfter(now)
-        ).toList();
+        return events
+            .where((e) =>
+                e.fecha.year == now.year &&
+                e.fecha.month == now.month &&
+                e.fecha.isAfter(now))
+            .toList();
       case EventDateFilter.nextMonth:
         final nextMonth = (now.month == 12) ? 1 : now.month + 1;
         final nextYear = (now.month == 12) ? now.year + 1 : now.year;
-        return events.where((e) => 
-          e.fecha.year == nextYear && 
-          e.fecha.month == nextMonth
-        ).toList();
+        return events
+            .where(
+                (e) => e.fecha.year == nextYear && e.fecha.month == nextMonth)
+            .toList();
       case EventDateFilter.past:
         return events.where((e) => e.fecha.isBefore(now)).toList();
       case EventDateFilter.all:
-      default:
         // All => mostrar solo los futuros
         return events.where((e) => e.fecha.isAfter(now)).toList();
     }

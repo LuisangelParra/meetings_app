@@ -1,26 +1,54 @@
-// track_model.dart
-
+/// Track model for the API
 class Track {
+  final int? id;
   final String nombre;
-  final List<int> eventos;
 
-  Track({required this.nombre, required this.eventos});
+  Track({
+    this.id,
+    required this.nombre,
+  });
 
-  /// Crea una instancia de Track a partir de un JSON Map.
+  /// Create a Track from API JSON
   factory Track.fromJson(Map<String, dynamic> json) {
     return Track(
+      id: json['id'] as int?,
       nombre: json['nombre'] as String,
-      eventos: (json['eventos'] as List<dynamic>)
-          .map((e) => e as int)
-          .toList(),
     );
   }
 
-  /// Convierte la instancia de Track a un Map<String, dynamic> en formato JSON.
+  /// Convert Track to JSON for API
   Map<String, dynamic> toJson() {
-    return {
+    final data = <String, dynamic>{
       'nombre': nombre,
-      'eventos': eventos,
     };
+
+    if (id != null) {
+      data['id'] = id;
+    }
+
+    return data;
   }
+
+  /// Create a copy of this Track with modified fields
+  Track copyWith({
+    int? id,
+    String? nombre,
+  }) {
+    return Track(
+      id: id ?? this.id,
+      nombre: nombre ?? this.nombre,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Track && other.id == id && other.nombre == nombre;
+  }
+
+  @override
+  int get hashCode => id.hashCode ^ nombre.hashCode;
+
+  @override
+  String toString() => 'Track(id: $id, nombre: $nombre)';
 }

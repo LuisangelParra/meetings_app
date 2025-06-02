@@ -11,7 +11,7 @@ class LPastEventList extends StatelessWidget {
   Widget build(BuildContext context) {
     final eventRepo = Provider.of<EventRepository>(context, listen: false);
     return FutureBuilder<List<Event>>(
-      future: eventRepo.loadDummyEvents(),
+      future: eventRepo.loadEvents(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

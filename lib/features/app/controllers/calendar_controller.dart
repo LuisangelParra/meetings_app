@@ -11,7 +11,7 @@ class CalendarController extends ChangeNotifier {
 
   /// Carga todos los eventos del repositorio
   Future<void> loadEvents() async {
-    _events = await _eventRepository.loadDummyEvents();
+    _events = await _eventRepository.loadEvents();
     notifyListeners();
   }
 

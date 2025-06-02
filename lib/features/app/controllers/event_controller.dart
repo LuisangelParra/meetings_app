@@ -59,8 +59,23 @@ class EventController extends ChangeNotifier {
 
   /// Carga los eventos desde el repositorio.
   Future<void> loadEvents() async {
-    _events = await _eventRepository.loadDummyEvents();
-    notifyListeners();
+    print("=== EventController.loadEvents() CALLED ===");
+    try {
+      _events = await _eventRepository.loadEvents();
+      print("EventController: Loaded ${_events.length} events");
+      
+      // Check specifically for chocolate event
+      final chocolateEvents = _events.where((event) => 
+        event.titulo.toLowerCase().contains('chocolate')
+      ).toList();
+      print("EventController: Found ${chocolateEvents.length} chocolate events");
+      
+      notifyListeners();
+      print("EventController: notifyListeners called");
+    } catch (e) {
+      print("EventController ERROR: $e");
+      rethrow;
+    }
   }
 
   /// Obtiene un evento por su id.
@@ -148,21 +163,8 @@ class EventController extends ChangeNotifier {
     }
 
     // Crear una copia actualizada del evento con un suscrito más
-    final updatedEvent = Event(
-      id: event.id,
-      titulo: event.titulo,
-      descripcion: event.descripcion,
-      tema: event.tema,
-      ponente: event.ponente,
-      invitadosEspeciales: event.invitadosEspeciales,
-      modalidad: event.modalidad,
-      lugar: event.lugar,
-      fecha: event.fecha,
-      horaInicio: event.horaInicio,
-      horaFin: event.horaFin,
-      maxParticipantes: event.maxParticipantes,
+    final updatedEvent = event.copyWith(
       suscritos: event.suscritos + 1, // Incrementar el contador de suscritos
-      imageUrl: event.imageUrl,
     );
 
     // Actualizar el evento en la lista
@@ -195,23 +197,10 @@ class EventController extends ChangeNotifier {
     final event = _events[eventIndex];
 
     // Crear una copia actualizada del evento con un suscrito menos, pero nunca menos de 0
-    final updatedEvent = Event(
-      id: event.id,
-      titulo: event.titulo,
-      descripcion: event.descripcion,
-      tema: event.tema,
-      ponente: event.ponente,
-      invitadosEspeciales: event.invitadosEspeciales,
-      modalidad: event.modalidad,
-      lugar: event.lugar,
-      fecha: event.fecha,
-      horaInicio: event.horaInicio,
-      horaFin: event.horaFin,
-      maxParticipantes: event.maxParticipantes,
+    final updatedEvent = event.copyWith(
       suscritos: event.suscritos > 0
           ? event.suscritos - 1
           : 0, // Decrementar el contador de suscritos
-      imageUrl: event.imageUrl,
     );
 
     // Actualizar el evento en la lista

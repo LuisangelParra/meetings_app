@@ -53,8 +53,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   void _showAddCommentModal() {
     final eventController =
         Provider.of<EventController>(context, listen: false);
-    final hasCommented = eventController.hasCommentedEvent(widget.event.id) ||
-        hasSubmittedComment;
+    final hasCommented =
+        eventController.hasCommentedEvent(widget.event.id ?? 0) ||
+            hasSubmittedComment;
 
     if (hasCommented) {
       // Si ya ha comentado, mostrar un mensaje
@@ -80,7 +81,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         ),
         child: SingleChildScrollView(
           child: AddCommentSection(
-            eventId: widget.event.id,
+            eventId: widget.event.id ?? 0,
             onCommentSubmitted: () {
               Navigator.pop(context);
               onCommentSubmitted();
@@ -103,15 +104,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
     // Verificar si el usuario ya ha comentado este evento
     final userHasCommented =
-        eventController.hasCommentedEvent(widget.event.id) ||
+        eventController.hasCommentedEvent(widget.event.id ?? 0) ||
             hasSubmittedComment;
 
     // Verificar si el usuario está suscrito a este evento
-    final isSubscribed = eventController.isSubscribed(widget.event.id);
+    final isSubscribed = eventController.isSubscribed(widget.event.id ?? 0);
 
     // Contar los comentarios para este evento
     final commentCount =
-        eventController.getCommentsForEvent(widget.event.id).length;
+        eventController.getCommentsForEvent(widget.event.id ?? 0).length;
 
     return Scaffold(
       backgroundColor: dark
@@ -272,7 +273,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                       ),
                                 ),
                                 Text(
-                                  widget.event.lugar,
+                                  widget.event.trackNames.isNotEmpty
+                                      ? widget.event.trackNames.join(', ')
+                                      : 'Track no especificado',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium
@@ -317,15 +320,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                           return const SizedBox();
                                         }
                                         if (snapshot.hasData) {
-                                          final List<Track> allTracks =
-                                              snapshot.data!;
                                           final List<String> eventTrackNames =
-                                              allTracks
-                                                  .where((track) =>
-                                                      track.eventos.contains(
-                                                          widget.event.id))
-                                                  .map((t) => t.nombre)
-                                                  .toList();
+                                              widget.event.trackNames;
                                           return Row(
                                             children: eventTrackNames
                                                 .map(
@@ -400,18 +396,18 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                       ),
                                 ),
                                 const SizedBox(height: 8),
-                                if (widget.event.invitadosEspeciales.isNotEmpty)
+                                if (widget.event.speakers.isNotEmpty)
                                   Wrap(
                                     spacing: 8,
                                     runSpacing: 4,
-                                    children: widget.event.invitadosEspeciales
-                                        .map((invitado) =>
-                                            TrackChip(context, invitado))
+                                    children: widget.event.speakers
+                                        .map((speaker) =>
+                                            TrackChip(context, speaker.name))
                                         .toList(),
                                   )
                                 else
                                   Text(
-                                    'No special guests',
+                                    'No additional speakers',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
@@ -426,7 +422,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           ),
 
                           // Lista de comentarios - siempre visible si hay comentarios
-                          CommentsListSection(eventId: widget.event.id),
+                          CommentsListSection(eventId: widget.event.id ?? 0),
 
                           // Mensaje de agradecimiento (si ha comentado)
                           if (isPastEvent && userHasCommented)

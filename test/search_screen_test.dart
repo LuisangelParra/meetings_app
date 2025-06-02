@@ -23,33 +23,30 @@ void main() {
             titulo: "Test Event 1",
             descripcion: "Test Description 1",
             tema: "IA",
-            ponente: "Test Speaker",
-            invitadosEspeciales: ["Guest 1"],
-            modalidad: "Presencial",
-            lugar: "Test Location",
+            ponenteId: 1,
             fecha: DateTime(2025, 4, 10),
             horaInicio: "10:00",
             horaFin: "11:30",
             maxParticipantes: 100,
             suscritos: 40,
             imageUrl: "assets/images/event.jpg",
+            speakers: [],
+            trackNames: ["AI", "Tech"],
           ),
           Event(
             id: 2,
             titulo: "Flutter Workshop",
             descripcion: "Learning Flutter",
             tema: "Tech",
-            ponente: "Flutter Expert",
-            invitadosEspeciales: [],
-            modalidad: "Virtual",
-            lugar: "",
-            plataforma: "Zoom",
+            ponenteId: 2,
             fecha: DateTime(2025, 5, 15),
             horaInicio: "14:00",
             horaFin: "16:00",
             maxParticipantes: 50,
             suscritos: 25,
             imageUrl: "assets/images/event.jpg",
+            speakers: [],
+            trackNames: ["Flutter", "Development"],
           ),
         ]);
   });
@@ -58,7 +55,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: ChangeNotifierProvider<EventRepository>.value(
+        home: Provider<EventRepository>.value(
           value: mockEventRepository,
           child: const SearchScreen(),
         ),
@@ -69,7 +66,7 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
 
     // Should show search icon in empty state
-    expect(find.byIcon(Icons.search_normal), findsOneWidget);
+    expect(find.byIcon(Icons.search), findsOneWidget);
 
     // Should show hint text
     expect(find.text('Busca eventos por título'), findsOneWidget);
@@ -79,7 +76,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: ChangeNotifierProvider<EventRepository>.value(
+        home: Provider<EventRepository>.value(
           value: mockEventRepository,
           child: const SearchScreen(),
         ),
@@ -111,7 +108,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: ChangeNotifierProvider<EventRepository>.value(
+        home: Provider<EventRepository>.value(
           value: mockEventRepository,
           child: const SearchScreen(),
         ),

@@ -15,7 +15,7 @@ class TrackController extends ChangeNotifier {
   /// Carga tanto los tracks como los eventos.
   Future<void> loadData() async {
     _tracks = await _eventRepository.loadDummyTracks();
-    _events = await _eventRepository.loadDummyEvents();
+    _events = await _eventRepository.loadEvents();
     notifyListeners();
   }
 
@@ -24,28 +24,26 @@ class TrackController extends ChangeNotifier {
     _tracks = await _eventRepository.loadDummyTracks();
     notifyListeners();
   }
-  
+
   /// Carga solo los eventos.
   Future<void> loadEvents() async {
-    _events = await _eventRepository.loadDummyEvents();
+    _events = await _eventRepository.loadEvents();
   }
 
   /// Retorna la lista de eventos asociados al track indicado.
   List<Event> getEventsForTrack(Track track) {
-    return _events.where((event) => track.eventos.contains(event.id)).toList();
+    return _events
+        .where((event) => event.trackNames.any((name) => name == track.nombre))
+        .toList();
   }
 
   /// Retorna la lista de eventos asociados a una o más tracks especificadas por su nombre.
   List<Event> getEventsForTracks(List<String> trackNames) {
-    // Se recopilan todos los IDs de eventos de los tracks que coincidan con alguno de los nombres.
-    final Set<int> eventIds = {};
-    for (var track in _tracks) {
-      if (trackNames.contains(track.nombre)) {
-        eventIds.addAll(track.eventos);
-      }
-    }
-    // Se retorna la lista de eventos cuyo id esté incluido en el conjunto.
-    return _events.where((event) => eventIds.contains(event.id)).toList();
+    // Filter events that have any of the specified track names
+    return _events
+        .where((event) => event.trackNames
+            .any((eventTrackName) => trackNames.contains(eventTrackName)))
+        .toList();
   }
 
   /// Retorna la lista de nombres de los tracks disponibles.
@@ -72,7 +70,8 @@ class TrackController extends ChangeNotifier {
 
   /// Actualiza un track existente.
   void updateTrack(Track updatedTrack) {
-    int index = _tracks.indexWhere((track) => track.nombre == updatedTrack.nombre);
+    int index =
+        _tracks.indexWhere((track) => track.nombre == updatedTrack.nombre);
     if (index != -1) {
       _tracks[index] = updatedTrack;
       notifyListeners();

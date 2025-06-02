@@ -11,9 +11,9 @@ import 'package:meetings_app/utils/helpers/helper_functions.dart';
 
 class PastEventHorizontalCard extends StatelessWidget {
   final Event event;
-  
+
   const PastEventHorizontalCard({super.key, required this.event});
-  
+
   @override
   Widget build(BuildContext context) {
     final dark = LHelperFunctions.isDarkMode(context);
@@ -48,10 +48,13 @@ class PastEventHorizontalCard extends StatelessWidget {
                     children: [
                       Text(
                         event.titulo,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontSize: 16,
-                          color: dark ? LColors.textWhite : LColors.dark,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall
+                            ?.copyWith(
+                              fontSize: 16,
+                              color: dark ? LColors.textWhite : LColors.dark,
+                            ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -64,7 +67,8 @@ class PastEventHorizontalCard extends StatelessWidget {
                       // Usar Consumer para actualizar el rating en la card
                       Consumer<EventController>(
                         builder: (context, eventController, child) {
-                          final averageRating = eventController.getAverageRatingForEvent(event.id);
+                          final averageRating = eventController
+                              .getAverageRatingForEvent(event.id ?? 0);
                           return StarRating(rating: averageRating);
                         },
                       ),

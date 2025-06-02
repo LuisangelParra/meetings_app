@@ -13,32 +13,30 @@ void main() {
         titulo: "Flutter Workshop",
         descripcion: "Learn Flutter basics",
         tema: "Tech",
-        ponente: "John Doe",
-        invitadosEspeciales: [],
-        modalidad: "Virtual",
-        plataforma: "Zoom",
+        ponenteId: 1,
         fecha: DateTime.now().add(const Duration(days: 10)),
         horaInicio: "10:00",
         horaFin: "12:00",
         maxParticipantes: 50,
         suscritos: 30,
         imageUrl: "assets/images/event.jpg",
+        speakers: [],
+        trackNames: ["Flutter", "Mobile"],
       ),
       Event(
         id: 2,
         titulo: "AI Conference",
         descripcion: "Discussing AI trends",
         tema: "IA",
-        ponente: "Jane Smith",
-        invitadosEspeciales: ["Guest Speaker"],
-        modalidad: "Presencial",
-        lugar: "Main Hall",
+        ponenteId: 2,
         fecha: DateTime.now().add(const Duration(days: 20)),
         horaInicio: "14:00",
         horaFin: "16:00",
         maxParticipantes: 100,
         suscritos: 75,
         imageUrl: "assets/images/event.jpg",
+        speakers: [],
+        trackNames: ["AI", "Tech"],
       ),
     ];
 
@@ -58,7 +56,7 @@ void main() {
     expect(find.text('IA'), findsOneWidget);
 
     // Check calendar icons are shown
-    expect(find.byIcon(Icons.calendar_1), findsNWidgets(2));
+    expect(find.byIcon(Icons.calendar_today), findsNWidgets(2));
   });
 
   testWidgets('SearchResultsWidget displays past event indicator',
@@ -70,16 +68,15 @@ void main() {
         titulo: "Past Workshop",
         descripcion: "Already happened",
         tema: "Tech",
-        ponente: "Past Speaker",
-        invitadosEspeciales: [],
-        modalidad: "Presencial",
-        lugar: "Old Venue",
+        ponenteId: 3,
         fecha: DateTime.now().subtract(const Duration(days: 5)),
         horaInicio: "09:00",
         horaFin: "11:00",
         maxParticipantes: 40,
         suscritos: 38,
         imageUrl: "assets/images/event.jpg",
+        speakers: [],
+        trackNames: ["Tech"],
       ),
     ];
 
@@ -118,16 +115,15 @@ void main() {
         titulo: "Flutter Workshop",
         descripcion: "Learn Flutter basics",
         tema: "Tech",
-        ponente: "John Doe",
-        invitadosEspeciales: [],
-        modalidad: "Virtual",
-        plataforma: "Zoom",
+        ponenteId: 1,
         fecha: DateTime.now().add(const Duration(days: 10)),
         horaInicio: "10:00",
         horaFin: "12:00",
         maxParticipantes: 50,
         suscritos: 30,
         imageUrl: "assets/images/event.jpg",
+        speakers: [],
+        trackNames: ["Flutter"],
       ),
     ];
 

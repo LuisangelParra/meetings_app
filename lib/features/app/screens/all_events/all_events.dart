@@ -3,9 +3,7 @@ import 'package:meetings_app/features/app/screens/all_events/widgets/filter.dart
 import 'package:provider/provider.dart';
 import 'package:meetings_app/common/widgets/events/cards/stylish_event_card.dart';
 import 'package:meetings_app/features/app/models/event_model.dart';
-import 'package:meetings_app/features/app/models/track_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
-import 'package:meetings_app/features/app/repository/track_repository.dart';
 import 'package:meetings_app/features/app/screens/event_details/event_detail.dart';
 import 'package:meetings_app/utils/constants/colors.dart';
 import 'package:meetings_app/utils/helpers/helper_functions.dart';
@@ -27,7 +25,8 @@ class AllEventsScreen extends StatefulWidget {
 
 class _AllEventsScreenState extends State<AllEventsScreen> {
   late Future<List<Event>> _futureEvents;
-  int _selectedFilterIndex = 0; // 0: All, 1: This Week, 2: This Month, 3: Next Month, 4: Past
+  int _selectedFilterIndex =
+      0; // 0: All, 1: This Week, 2: This Month, 3: Next Month, 4: Past
 
   @override
   void initState() {
@@ -35,7 +34,7 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
     // Establecer filtro por defecto a partir del parámetro, si se pasa.
     _selectedFilterIndex = widget.defaultFilter?.index ?? 0;
     final eventRepo = Provider.of<EventRepository>(context, listen: false);
-    _futureEvents = eventRepo.loadDummyEvents();
+    _futureEvents = eventRepo.loadEvents();
   }
 
   @override
@@ -46,8 +45,9 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
         title: Text(widget.trackName ?? "All Events"),
         backgroundColor: dark ? LColors.dark : LColors.light,
       ),
-      backgroundColor:
-          dark ? LColors.dark.withValues(alpha: 0.95) : LColors.light.withValues(alpha: 0.95),
+      backgroundColor: dark
+          ? LColors.dark.withValues(alpha: 0.95)
+          : LColors.light.withValues(alpha: 0.95),
       body: FutureBuilder<List<Event>>(
         future: _futureEvents,
         builder: (context, snapshot) {
@@ -63,11 +63,13 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
             return FutureBuilder<List<Event>>(
               future: _filterByTrack(events, widget.trackName),
               builder: (context, filteredTrackSnap) {
-                if (filteredTrackSnap.connectionState == ConnectionState.waiting) {
+                if (filteredTrackSnap.connectionState ==
+                    ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
                 if (filteredTrackSnap.hasError) {
-                  return Center(child: Text('Error: ${filteredTrackSnap.error}'));
+                  return Center(
+                      child: Text('Error: ${filteredTrackSnap.error}'));
                 }
                 if (filteredTrackSnap.hasData) {
                   events = filteredTrackSnap.data!;
@@ -89,11 +91,16 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 4),
                         child: Text(
                           '${events.length} events found',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: dark ? LColors.textWhite : LColors.darkGrey,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color:
+                                    dark ? LColors.textWhite : LColors.darkGrey,
                               ),
                         ),
                       ),
@@ -104,12 +111,15 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
                                 child: Text(
                                   "No events found",
                                   style: TextStyle(
-                                    color: dark ? LColors.textWhite : LColors.darkGrey,
+                                    color: dark
+                                        ? LColors.textWhite
+                                        : LColors.darkGrey,
                                   ),
                                 ),
                               )
                             : ListView.builder(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                                 itemCount: events.length,
                                 itemBuilder: (context, index) {
                                   final event = events[index];
@@ -120,7 +130,8 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => EventDetailScreen(event: event),
+                                            builder: (_) =>
+                                                EventDetailScreen(event: event),
                                           ),
                                         );
                                       },
@@ -144,15 +155,14 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
   }
 
   /// Filtra eventos según el track, si trackName no es null.
-  Future<List<Event>> _filterByTrack(List<Event> events, String? trackName) async {
+  Future<List<Event>> _filterByTrack(
+      List<Event> events, String? trackName) async {
     if (trackName == null) return events;
-    final trackRepo = Provider.of<TrackRepository>(context, listen: false);
-    final tracks = await trackRepo.loadDummyTracks();
-    final targetTrack = tracks.firstWhere(
-      (t) => t.nombre.toLowerCase() == trackName.toLowerCase(),
-      orElse: () => Track(nombre: trackName, eventos: []),
-    );
-    return events.where((e) => targetTrack.eventos.contains(e.id)).toList();
+    // Filter events by trackNames field since Track no longer has eventos field
+    return events
+        .where((event) => event.trackNames
+            .any((name) => name.toLowerCase() == trackName.toLowerCase()))
+        .toList();
   }
 
   /// Aplica el filtro de fecha al listado de eventos.
@@ -162,17 +172,24 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
     switch (index) {
       case 1: // This Week
         final oneWeekLater = now.add(const Duration(days: 7));
-        return events.where((e) => e.fecha.isAfter(now) && e.fecha.isBefore(oneWeekLater)).toList();
+        return events
+            .where(
+                (e) => e.fecha.isAfter(now) && e.fecha.isBefore(oneWeekLater))
+            .toList();
       case 2: // This Month
-        return events.where(
-          (e) => e.fecha.year == now.year && e.fecha.month == now.month && e.fecha.isAfter(now)
-        ).toList();
+        return events
+            .where((e) =>
+                e.fecha.year == now.year &&
+                e.fecha.month == now.month &&
+                e.fecha.isAfter(now))
+            .toList();
       case 3: // Next Month
         final nextMonth = (now.month == 12) ? 1 : now.month + 1;
         final nextYear = (now.month == 12) ? now.year + 1 : now.year;
-        return events.where(
-          (e) => e.fecha.year == nextYear && e.fecha.month == nextMonth
-        ).toList();
+        return events
+            .where(
+                (e) => e.fecha.year == nextYear && e.fecha.month == nextMonth)
+            .toList();
       case 4: // Past
         return events.where((e) => e.fecha.isBefore(now)).toList();
       case 0: // All (por defecto, mostramos solo los futuros).
@@ -181,4 +198,3 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
     }
   }
 }
-

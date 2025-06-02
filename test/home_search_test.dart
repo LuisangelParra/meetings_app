@@ -29,7 +29,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: ChangeNotifierProvider<EventRepository>.value(
+        home: Provider<EventRepository>.value(
           value: mockEventRepository,
           child: const HomeScreen(),
         ),
@@ -62,7 +62,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: ChangeNotifierProvider<EventRepository>.value(
+        home: Provider<EventRepository>.value(
           value: mockEventRepository,
           child: const HomeScreen(),
         ),

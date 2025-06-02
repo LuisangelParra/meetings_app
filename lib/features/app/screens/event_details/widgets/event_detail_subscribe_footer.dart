@@ -25,14 +25,11 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
   Widget build(BuildContext context) {
     // Usar Provider para acceder al controlador
     final eventController = Provider.of<EventController>(context);
-    final isSubscribed = eventController.isSubscribed(widget.event.id);
+    final isSubscribed = eventController.isSubscribed(widget.event.id ?? 0);
 
     // Recuperar el evento nuevamente para tener los datos actualizados
-    Event currentEvent = widget.event;
-    final updatedEvent = eventController.getEventById(widget.event.id);
-    if (updatedEvent != null) {
-      currentEvent = updatedEvent;
-    }
+    final updatedEvent = eventController.getEventById(widget.event.id ?? 0);
+    Event currentEvent = updatedEvent ?? widget.event;
 
     final cuposRestantes =
         currentEvent.maxParticipantes - currentEvent.suscritos;
@@ -90,8 +87,8 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
                     bool success;
                     if (isSubscribed) {
                       // Cancelar suscripción
-                      success =
-                          eventController.unsubscribeFromEvent(currentEvent.id);
+                      success = eventController
+                          .unsubscribeFromEvent(currentEvent.id ?? 0);
                       if (success) {
                         _showSnackBar('Suscripción cancelada');
                       } else {
@@ -100,8 +97,8 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
                       }
                     } else {
                       // Suscribirse
-                      success =
-                          eventController.subscribeToEvent(currentEvent.id);
+                      success = eventController
+                          .subscribeToEvent(currentEvent.id ?? 0);
                       if (success) {
                         _showSnackBar('¡Te has suscrito al evento!');
                       } else if (cuposAgotados) {

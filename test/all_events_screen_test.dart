@@ -31,10 +31,7 @@ void main() {
         titulo: "Next Week Event",
         descripcion: "An event next week",
         tema: "Tech",
-        ponente: "Speaker 1",
-        invitadosEspeciales: [],
-        modalidad: "Presencial",
-        lugar: "Place 1",
+        ponenteId: 1,
         fecha: now.add(const Duration(days: 5)),
         horaInicio: "10:00",
         horaFin: "11:00",
@@ -47,10 +44,7 @@ void main() {
         titulo: "This Month Event",
         descripcion: "An event this month",
         tema: "IA",
-        ponente: "Speaker 2",
-        invitadosEspeciales: [],
-        modalidad: "Virtual",
-        plataforma: "Zoom",
+        ponenteId: 2,
         fecha: now.add(Duration(
             days: 15, hours: now.hour > 0 ? 0 : 1)), // Ensure it's this month
         horaInicio: "14:00",
@@ -64,11 +58,7 @@ void main() {
         titulo: "Next Month Event",
         descripcion: "An event next month",
         tema: "Exito",
-        ponente: "Speaker 3",
-        invitadosEspeciales: [],
-        modalidad: "Hibrida",
-        lugar: "Place 2",
-        plataforma: "Teams",
+        ponenteId: 3,
         fecha: DateTime(now.year, now.month + 1, 15), // Next month
         horaInicio: "11:00",
         horaFin: "12:30",
@@ -82,10 +72,7 @@ void main() {
         titulo: "Past Event",
         descripcion: "A past event",
         tema: "Negocios",
-        ponente: "Speaker 4",
-        invitadosEspeciales: [],
-        modalidad: "Presencial",
-        lugar: "Place 3",
+        ponenteId: 4,
         fecha: now.subtract(const Duration(days: 5)),
         horaInicio: "15:00",
         horaFin: "16:30",
@@ -97,10 +84,10 @@ void main() {
 
     // Mock track data
     final List<Track> testTracks = [
-      Track(nombre: "Tech", eventos: [1, 2]),
-      Track(nombre: "IA", eventos: [2]),
-      Track(nombre: "Exito", eventos: [3]),
-      Track(nombre: "Negocios", eventos: [4]),
+      Track(nombre: "Tech"),
+      Track(nombre: "IA"),
+      Track(nombre: "Exito"),
+      Track(nombre: "Negocios"),
     ];
 
     when(mockEventRepository.loadDummyEvents())

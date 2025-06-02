@@ -24,7 +24,7 @@ class StylishEventCard extends StatelessWidget {
 
     // Intentar obtener el evento actualizado del controlador
     Event currentEvent = event;
-    final updatedEvent = eventController.getEventById(event.id);
+    final updatedEvent = eventController.getEventById(event.id ?? 0);
     if (updatedEvent != null) {
       currentEvent = updatedEvent;
     }
@@ -185,10 +185,12 @@ class StylishEventCard extends StatelessWidget {
                               icon: Icons.calendar_today,
                             ),
                             const SizedBox(height: 8),
-                            // Lugar
+                            // Tracks
                             LEventDetail(
-                              information: currentEvent.lugar,
-                              icon: Icons.location_on,
+                              information: currentEvent.trackNames.isNotEmpty
+                                  ? currentEvent.trackNames.join(', ')
+                                  : 'Track no especificado',
+                              icon: Icons.category,
                             ),
                           ],
                         ),

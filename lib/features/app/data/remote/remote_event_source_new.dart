@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:loggy/loggy.dart';
 import '../../models/event_model.dart';
 import '../../models/speaker_model.dart';
@@ -24,20 +26,6 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
 
       // Get events data
       final eventsData = await _apiService.getAllData(ApiConstants.eventsTable);
-      loggy.info('Raw events data received: ${eventsData.length} items');
-      
-      // Log the first few events for debugging
-      if (eventsData.isNotEmpty) {
-        loggy.info('First event data: ${eventsData.first}');
-        // Check specifically for chocolate event
-        final chocolateEvent = eventsData.where((event) => 
-          event['titulo']?.toString().toLowerCase().contains('chocolate') == true
-        ).toList();
-        loggy.info('Found ${chocolateEvent.length} chocolate events in raw data');
-        if (chocolateEvent.isNotEmpty) {
-          loggy.info('Chocolate event found: ${chocolateEvent.first}');
-        }
-      }
 
       // Get related data
       final speakers = await _speakerSource.getAllSpeakers();
@@ -49,77 +37,51 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
       final events = <Event>[];
 
       for (final eventData in eventsData) {
-        try {
-          final event = Event.fromJson(eventData);
-          loggy.debug('Successfully parsed event: ${event.titulo} (ID: ${event.id})');
+        final event = Event.fromJson(eventData);
 
-          // Find main speaker
-          Speaker? mainSpeaker;
-          if (event.ponenteId != null) {
-            try {
-              for (final speaker in speakers) {
-                if (speaker.id != null && speaker.id == event.ponenteId) {
-                  mainSpeaker = speaker;
-                  break;
-                }
-              }
-              mainSpeaker ??= Speaker(name: 'Ponente no encontrado');
-            } catch (e) {
-              mainSpeaker = Speaker(name: 'Ponente no encontrado');
-            }
+        // Find main speaker
+        Speaker? mainSpeaker;
+        if (event.ponenteId != null) {
+          try {
+            mainSpeaker = speakers.firstWhere(
+              (s) => s.id == event.ponenteId,
+            );
+          } catch (e) {
+            mainSpeaker = Speaker(name: 'Ponente no encontrado');
           }
-
-          // Find all speakers for this event
-          final eventSpeakerIds = eventSpeakers
-              .where((es) => es['event_id'] == event.id)
-              .map((es) => es['speaker_id'] as int)
-              .toList();
-
-          final allEventSpeakers = <Speaker>[];
-          for (final speaker in speakers) {
-            if (speaker.id != null && eventSpeakerIds.contains(speaker.id!)) {
-              allEventSpeakers.add(speaker);
-            }
-          }
-
-          // Find track names for this event
-          final eventTrackIds = eventTracks
-              .where((et) => et['event_id'] == event.id)
-              .map((et) => et['track_id'] as int)
-              .toList();
-
-          final trackNames = <String>[];
-          for (final track in tracks) {
-            if (track.id != null && eventTrackIds.contains(track.id!)) {
-              trackNames.add(track.nombre);
-            }
-          }
-
-          // Create enriched event
-          final enrichedEvent = event.copyWith(
-            ponente: mainSpeaker,
-            speakers: allEventSpeakers,
-            trackNames: trackNames,
-          );
-
-          events.add(enrichedEvent);
-        } catch (e) {
-          loggy.error('Error parsing individual event: $e');
-          loggy.error('Event data that failed: $eventData');
         }
+
+        // Find all speakers for this event
+        final eventSpeakerIds = eventSpeakers
+            .where((es) => es['event_id'] == event.id)
+            .map((es) => es['speaker_id'] as int)
+            .toList();
+
+        final allEventSpeakers =
+            speakers.where((s) => eventSpeakerIds.contains(s.id)).toList();
+
+        // Find track names for this event
+        final eventTrackIds = eventTracks
+            .where((et) => et['event_id'] == event.id)
+            .map((et) => et['track_id'] as int)
+            .toList();
+
+        final trackNames = tracks
+            .where((t) => eventTrackIds.contains(t.id))
+            .map((t) => t.nombre)
+            .toList();
+
+        // Create enriched event
+        final enrichedEvent = event.copyWith(
+          ponente: mainSpeaker,
+          speakers: allEventSpeakers,
+          trackNames: trackNames,
+        );
+
+        events.add(enrichedEvent);
       }
 
       loggy.info('Successfully loaded ${events.length} events');
-      
-      // Check specifically for chocolate event in final results
-      final finalChocolateEvents = events.where((event) => 
-        event.titulo.toLowerCase().contains('chocolate')
-      ).toList();
-      loggy.info('Final chocolate events count: ${finalChocolateEvents.length}');
-      if (finalChocolateEvents.isNotEmpty) {
-        loggy.info('Final chocolate event: ${finalChocolateEvents.first.titulo} (ID: ${finalChocolateEvents.first.id})');
-      }
-      
       return events;
     } catch (e) {
       loggy.error('Error fetching events: $e');

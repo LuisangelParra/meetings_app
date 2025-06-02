@@ -24,7 +24,7 @@ class SubscriptionEventCard extends StatelessWidget {
 
     // Intentar obtener el evento actualizado del controlador
     Event currentEvent = event;
-    final updatedEvent = eventController.getEventById(event.id);
+    final updatedEvent = eventController.getEventById(event.id ?? 0);
     if (updatedEvent != null) {
       currentEvent = updatedEvent;
     }
@@ -231,7 +231,9 @@ class SubscriptionEventCard extends StatelessWidget {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    currentEvent.lugar,
+                                    currentEvent.trackNames.isNotEmpty
+                                        ? currentEvent.trackNames.join(', ')
+                                        : 'Track no especificado',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
