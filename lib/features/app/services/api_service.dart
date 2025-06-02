@@ -37,9 +37,12 @@ class ApiService with UiLoggy {
 
           for (final item in dataArray) {
             if (item is Map<String, dynamic> && item.containsKey('data')) {
-              // Extract the actual data from the wrapper
-              final Map<String, dynamic> eventData = item['data'];
-              processedData.add(eventData);
+              // Preserve both entry_id and data
+              final Map<String, dynamic> wrappedItem = {
+                'entry_id': item['entry_id'],
+                'data': item['data'],
+              };
+              processedData.add(wrappedItem);
             } else if (item is Map<String, dynamic>) {
               // Direct data format
               processedData.add(item);

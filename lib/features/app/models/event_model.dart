@@ -2,6 +2,7 @@ import 'speaker_model.dart';
 
 class Event {
   final int? id;
+  final int? entryId; // Entry ID from API database
   final String titulo;
   final String descripcion;
   final String tema;
@@ -20,6 +21,7 @@ class Event {
 
   Event({
     this.id,
+    this.entryId,
     required this.titulo,
     required this.descripcion,
     required this.tema,
@@ -38,18 +40,34 @@ class Event {
   /// Create an Event from API JSON
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      id: json['id'] as int?,
+      id: _parseIntSafely(json['id']),
+      entryId: _parseIntSafely(json['entry_id']),
       titulo: json['titulo'] as String? ?? 'Sin título',
       descripcion: json['descripcion'] as String? ?? 'Sin descripción',
       tema: json['tema'] as String? ?? 'Sin tema',
-      ponenteId: json['ponente_id'] as int?,
+      ponenteId: _parseIntSafely(json['ponente_id']),
       fecha: DateTime.parse(json['fecha'] as String),
       horaInicio: json['hora_inicio'] as String? ?? '',
       horaFin: json['hora_fin'] as String? ?? '',
-      maxParticipantes: json['max_participantes'] as int? ?? 0,
-      suscritos: json['suscritos'] as int? ?? 0,
+      maxParticipantes: _parseIntSafely(json['max_participantes']) ?? 0,
+      suscritos: _parseIntSafely(json['suscritos']) ?? 0,
       imageUrl: json['imageUrl'] as String? ?? 'assets/images/event.jpg',
     );
+  }
+
+  /// Safely parse int from dynamic value (handles String, int, double, null)
+  static int? _parseIntSafely(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) {
+      try {
+        return int.parse(value);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   }
 
   /// Convert Event to JSON for API
@@ -70,6 +88,10 @@ class Event {
       data['id'] = id;
     }
 
+    if (entryId != null) {
+      data['entry_id'] = entryId;
+    }
+
     if (ponenteId != null) {
       data['ponente_id'] = ponenteId;
     }
@@ -80,6 +102,7 @@ class Event {
   /// Create a copy of this Event with modified fields
   Event copyWith({
     int? id,
+    int? entryId,
     String? titulo,
     String? descripcion,
     String? tema,
@@ -96,6 +119,7 @@ class Event {
   }) {
     return Event(
       id: id ?? this.id,
+      entryId: entryId ?? this.entryId,
       titulo: titulo ?? this.titulo,
       descripcion: descripcion ?? this.descripcion,
       tema: tema ?? this.tema,

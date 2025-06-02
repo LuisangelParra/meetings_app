@@ -146,76 +146,123 @@ class EventController extends ChangeNotifier {
   }
 
   // Método para suscribirse a un evento
-  bool subscribeToEvent(int eventId) {
+  Future<bool> subscribeToEvent(int eventId) async {
+    print("=== EventController.subscribeToEvent($eventId) CALLED ===");
+    
     // Verificar si ya está suscrito
     if (_subscribedEventIds.contains(eventId)) {
+      print("Already subscribed to event $eventId");
       return true; // Ya está suscrito
     }
 
     // Buscar el evento
     final eventIndex = _events.indexWhere((event) => event.id == eventId);
-    if (eventIndex == -1) return false; // Evento no encontrado
+    if (eventIndex == -1) {
+      print("Event $eventId not found");
+      return false; // Evento no encontrado
+    }
 
     // Verificar si hay cupos disponibles
     final event = _events[eventIndex];
     if (event.suscritos >= event.maxParticipantes) {
+      print("Event $eventId is full");
       return false; // No hay cupos disponibles
     }
 
-    // Crear una copia actualizada del evento con un suscrito más
-    final updatedEvent = event.copyWith(
-      suscritos: event.suscritos + 1, // Incrementar el contador de suscritos
-    );
+    try {
+      // Crear una copia actualizada del evento con un suscrito más
+      final updatedEvent = event.copyWith(
+        suscritos: event.suscritos + 1, // Incrementar el contador de suscritos
+      );
 
-    // Actualizar el evento en la lista
-    _events[eventIndex] = updatedEvent;
+      print("Updating event in API: suscritos ${event.suscritos} -> ${updatedEvent.suscritos}");
+      
+      // Guardar en la API a través del repositorio
+      final success = await _eventRepository.saveEvent(updatedEvent);
+      
+      if (success) {
+        print("Successfully updated event in API");
+        
+        // Actualizar el evento en la lista local
+        _events[eventIndex] = updatedEvent;
 
-    // Agregar a la lista de suscritos
-    _subscribedEventIds.add(eventId);
+        // Agregar a la lista de suscritos
+        _subscribedEventIds.add(eventId);
 
-    // Persistir en almacenamiento local
-    _saveSubscribedEvents();
+        // Persistir en almacenamiento local
+        _saveSubscribedEvents();
 
-    // Notificar cambios
-    notifyListeners();
-
-    return true;
+        // Notificar cambios
+        notifyListeners();
+        
+        return true;
+      } else {
+        print("Failed to update event in API");
+        return false;
+      }
+    } catch (e) {
+      print("Error subscribing to event $eventId: $e");
+      return false;
+    }
   }
 
   // Método para cancelar la suscripción a un evento
-  bool unsubscribeFromEvent(int eventId) {
+  Future<bool> unsubscribeFromEvent(int eventId) async {
+    print("=== EventController.unsubscribeFromEvent($eventId) CALLED ===");
+    
     // Verificar si está suscrito
     if (!_subscribedEventIds.contains(eventId)) {
+      print("Not subscribed to event $eventId");
       return false; // No está suscrito
     }
 
     // Buscar el evento
     final eventIndex = _events.indexWhere((event) => event.id == eventId);
-    if (eventIndex == -1) return false; // Evento no encontrado
+    if (eventIndex == -1) {
+      print("Event $eventId not found");
+      return false; // Evento no encontrado
+    }
 
-    // Obtener el evento actual
-    final event = _events[eventIndex];
+    try {
+      // Obtener el evento actual
+      final event = _events[eventIndex];
 
-    // Crear una copia actualizada del evento con un suscrito menos, pero nunca menos de 0
-    final updatedEvent = event.copyWith(
-      suscritos: event.suscritos > 0
-          ? event.suscritos - 1
-          : 0, // Decrementar el contador de suscritos
-    );
+      // Crear una copia actualizada del evento con un suscrito menos, pero nunca menos de 0
+      final updatedEvent = event.copyWith(
+        suscritos: event.suscritos > 0
+            ? event.suscritos - 1
+            : 0, // Decrementar el contador de suscritos
+      );
 
-    // Actualizar el evento en la lista
-    _events[eventIndex] = updatedEvent;
+      print("Updating event in API: suscritos ${event.suscritos} -> ${updatedEvent.suscritos}");
+      
+      // Guardar en la API a través del repositorio
+      final success = await _eventRepository.saveEvent(updatedEvent);
+      
+      if (success) {
+        print("Successfully updated event in API");
+        
+        // Actualizar el evento en la lista local
+        _events[eventIndex] = updatedEvent;
 
-    // Remover de la lista de suscritos
-    _subscribedEventIds.remove(eventId);
+        // Remover de la lista de suscritos
+        _subscribedEventIds.remove(eventId);
 
-    // Persistir en almacenamiento local
-    _saveSubscribedEvents();
+        // Persistir en almacenamiento local
+        _saveSubscribedEvents();
 
-    // Notificar cambios
-    notifyListeners();
-
-    return true;
+        // Notificar cambios
+        notifyListeners();
+        
+        return true;
+      } else {
+        print("Failed to update event in API");
+        return false;
+      }
+    } catch (e) {
+      print("Error unsubscribing from event $eventId: $e");
+      return false;
+    }
   }
 
   // Método para cargar eventos suscritos desde el almacenamiento local

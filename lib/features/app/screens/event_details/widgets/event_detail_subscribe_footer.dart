@@ -87,7 +87,7 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
                     bool success;
                     if (isSubscribed) {
                       // Cancelar suscripción
-                      success = eventController
+                      success = await eventController
                           .unsubscribeFromEvent(currentEvent.id ?? 0);
                       if (success) {
                         _showSnackBar('Suscripción cancelada');
@@ -97,7 +97,7 @@ class _SubscribeFooterState extends State<SubscribeFooter> {
                       }
                     } else {
                       // Suscribirse
-                      success = eventController
+                      success = await eventController
                           .subscribeToEvent(currentEvent.id ?? 0);
                       if (success) {
                         _showSnackBar('¡Te has suscrito al evento!');

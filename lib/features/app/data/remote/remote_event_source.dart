@@ -50,15 +50,35 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
 
       for (final eventData in eventsData) {
         try {
-          final event = Event.fromJson(eventData);
-          loggy.debug('Successfully parsed event: ${event.titulo} (ID: ${event.id})');
+          // Extract entry_id if it exists (from API wrapper)
+          int? entryId;
+          Map<String, dynamic> actualEventData = eventData;
+          
+          if (eventData.containsKey('entry_id') && eventData.containsKey('data')) {
+            // Use safe parsing for entry_id since it comes as String from API
+            final entryIdValue = eventData['entry_id'];
+            if (entryIdValue is int) {
+              entryId = entryIdValue;
+            } else if (entryIdValue is String) {
+              entryId = int.tryParse(entryIdValue);
+            }
+            actualEventData = eventData['data'] as Map<String, dynamic>;
+            loggy.debug('Found entry_id: $entryId for event: ${actualEventData['titulo']}');
+          }
+          
+          final event = Event.fromJson(actualEventData);
+          
+          // Add the entry_id to the event
+          final eventWithEntryId = event.copyWith(entryId: entryId);
+          
+          loggy.debug('Successfully parsed event: ${eventWithEntryId.titulo} (ID: ${eventWithEntryId.id}, EntryID: ${eventWithEntryId.entryId})');
 
           // Find main speaker
           Speaker? mainSpeaker;
-          if (event.ponenteId != null) {
+          if (eventWithEntryId.ponenteId != null) {
             try {
               for (final speaker in speakers) {
-                if (speaker.id != null && speaker.id == event.ponenteId) {
+                if (speaker.id != null && speaker.id == eventWithEntryId.ponenteId) {
                   mainSpeaker = speaker;
                   break;
                 }
@@ -69,11 +89,19 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
             }
           }
 
-          // Find all speakers for this event
-          final eventSpeakerIds = eventSpeakers
-              .where((es) => es['event_id'] == event.id)
-              .map((es) => es['speaker_id'] as int)
-              .toList();
+          // Find all speakers for this event - use safe parsing
+          final eventSpeakerIds = <int>[];
+          for (final es in eventSpeakers) {
+            if (es['event_id'] == eventWithEntryId.id) {
+              final speakerId = es['speaker_id'];
+              if (speakerId is int) {
+                eventSpeakerIds.add(speakerId);
+              } else if (speakerId is String) {
+                final parsed = int.tryParse(speakerId);
+                if (parsed != null) eventSpeakerIds.add(parsed);
+              }
+            }
+          }
 
           final allEventSpeakers = <Speaker>[];
           for (final speaker in speakers) {
@@ -82,11 +110,19 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
             }
           }
 
-          // Find track names for this event
-          final eventTrackIds = eventTracks
-              .where((et) => et['event_id'] == event.id)
-              .map((et) => et['track_id'] as int)
-              .toList();
+          // Find track names for this event - use safe parsing
+          final eventTrackIds = <int>[];
+          for (final et in eventTracks) {
+            if (et['event_id'] == eventWithEntryId.id) {
+              final trackId = et['track_id'];
+              if (trackId is int) {
+                eventTrackIds.add(trackId);
+              } else if (trackId is String) {
+                final parsed = int.tryParse(trackId);
+                if (parsed != null) eventTrackIds.add(parsed);
+              }
+            }
+          }
 
           final trackNames = <String>[];
           for (final track in tracks) {
@@ -96,7 +132,7 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
           }
 
           // Create enriched event
-          final enrichedEvent = event.copyWith(
+          final enrichedEvent = eventWithEntryId.copyWith(
             ponente: mainSpeaker,
             speakers: allEventSpeakers,
             trackNames: trackNames,
@@ -166,15 +202,18 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
   @override
   Future<bool> updateEvent(Event event) async {
     try {
-      if (event.id == null) {
-        throw Exception('Event ID is required for update');
+      // Use entry_id for API updates, fallback to regular id
+      final updateId = event.entryId ?? event.id;
+      
+      if (updateId == null) {
+        throw Exception('Event ID or Entry ID is required for update');
       }
 
-      loggy.info('Updating event with ID: ${event.id}');
+      loggy.info('Updating event with Entry ID: ${event.entryId} (Event ID: ${event.id})');
 
       await _apiService.updateData(
         ApiConstants.eventsTable,
-        event.id!,
+        updateId,
         event.toJson(),
       );
 
