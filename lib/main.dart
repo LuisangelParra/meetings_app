@@ -8,6 +8,7 @@ import 'package:meetings_app/features/app/repository/feedback_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:meetings_app/app.dart';
 import 'package:meetings_app/features/app/controllers/event_controller.dart';
+import 'package:meetings_app/features/app/controllers/feedback_controller.dart';
 import 'package:meetings_app/features/app/controllers/calendar_controller.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:loggy/loggy.dart';
@@ -64,15 +65,51 @@ void main() async {
           update: (_, remote, __) => TrackRepository(remote: remote),
         ),
         Provider<SpeakerRepository>(create: (_) => SpeakerRepository()),
-        Provider<FeedbackRepository>(create: (_) => FeedbackRepository()),
+        ProxyProvider<RemoteFeedbackSource, FeedbackRepository>(
+          update: (_, remote, __) => FeedbackRepository(remote: remote),
+        ),
 
         // Controllers
         ChangeNotifierProvider(
           create: (_) => EventController(),
         ),
+        ChangeNotifierProxyProvider<FeedbackRepository, FeedbackController>(
+          create: (context) => FeedbackController(
+            feedbackRepository: context.read<FeedbackRepository>(),
+          ),
+          update: (_, repository, previous) => previous ?? FeedbackController(
+            feedbackRepository: repository,
+          ),
+        ),
         ChangeNotifierProvider(create: (_) => CalendarController()),
       ],
-      child: const App(),
+      child: const MyAppWrapper(),
     ),
   );
+}
+
+// Wrapper para conectar FeedbackController al EventController después de la inicialización
+class MyAppWrapper extends StatefulWidget {
+  const MyAppWrapper({super.key});
+
+  @override
+  State<MyAppWrapper> createState() => _MyAppWrapperState();
+}
+
+class _MyAppWrapperState extends State<MyAppWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    // Conectar FeedbackController al EventController después de que se construya el widget
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final eventController = context.read<EventController>();
+      final feedbackController = context.read<FeedbackController>();
+      eventController.setFeedbackController(feedbackController);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const App();
+  }
 }

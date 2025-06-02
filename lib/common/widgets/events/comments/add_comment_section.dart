@@ -78,8 +78,8 @@ class _AddCommentSectionState extends State<AddCommentSection> {
       final eventController =
           Provider.of<EventController>(context, listen: false);
 
-      // Añadir el comentario
-      eventController.addComment(
+      // Añadir el comentario (ahora es asíncrono)
+      await eventController.addComment(
         eventId: widget.eventId,
         content: _commentController.text.trim(),
         rating: _rating.toInt(),

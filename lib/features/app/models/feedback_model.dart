@@ -1,6 +1,7 @@
 /// Feedback model for the API
 class Feedback {
   final int? id;
+  final int? entryId; // Entry ID from API database
   final int eventId;
   final int rating; // 1-5
   final String comment;
@@ -8,6 +9,7 @@ class Feedback {
 
   Feedback({
     this.id,
+    this.entryId,
     required this.eventId,
     required this.rating,
     required this.comment,
@@ -17,14 +19,30 @@ class Feedback {
   /// Create a Feedback from JSON
   factory Feedback.fromJson(Map<String, dynamic> json) {
     return Feedback(
-      id: json['id'] as int?,
-      eventId: json['event_id'] as int,
-      rating: json['rating'] as int,
+      id: _parseIntSafely(json['id']),
+      entryId: _parseIntSafely(json['entry_id']),
+      eventId: _parseIntSafely(json['event_id']) ?? 0,
+      rating: _parseIntSafely(json['rating']) ?? 1,
       comment: json['comment'] as String? ?? '',
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
+          ? DateTime.tryParse(json['created_at'] as String)
           : null,
     );
+  }
+
+  /// Safely parse int from dynamic value (handles String, int, double, null)
+  static int? _parseIntSafely(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) {
+      try {
+        return int.parse(value);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   }
 
   /// Convert Feedback to JSON
@@ -39,6 +57,10 @@ class Feedback {
       data['id'] = id;
     }
 
+    if (entryId != null) {
+      data['entry_id'] = entryId;
+    }
+
     if (createdAt != null) {
       data['created_at'] = createdAt!.toIso8601String();
     }
@@ -49,6 +71,7 @@ class Feedback {
   /// Create a copy of this Feedback with modified fields
   Feedback copyWith({
     int? id,
+    int? entryId,
     int? eventId,
     int? rating,
     String? comment,
@@ -56,6 +79,7 @@ class Feedback {
   }) {
     return Feedback(
       id: id ?? this.id,
+      entryId: entryId ?? this.entryId,
       eventId: eventId ?? this.eventId,
       rating: rating ?? this.rating,
       comment: comment ?? this.comment,

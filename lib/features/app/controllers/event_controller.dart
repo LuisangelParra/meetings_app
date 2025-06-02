@@ -2,11 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:meetings_app/features/app/models/event_model.dart';
 import 'package:meetings_app/features/app/models/event_comment_model.dart';
 import 'package:meetings_app/features/app/repository/event_repository.dart';
+import 'package:meetings_app/features/app/controllers/feedback_controller.dart';
 import 'package:get_storage/get_storage.dart';
 
 class EventController extends ChangeNotifier {
   final EventRepository _eventRepository = EventRepository();
   final _storage = GetStorage();
+
+  // Referencia opcional al FeedbackController
+  FeedbackController? _feedbackController;
 
   // Clave para almacenar IDs de eventos suscritos en GetStorage
   static const String _subscribedEventsKey = 'subscribed_events';
@@ -16,7 +20,7 @@ class EventController extends ChangeNotifier {
   // Lista interna para almacenar los eventos.
   List<Event> _events = [];
 
-  // Lista interna para almacenar los comentarios.
+  // Lista interna para almacenar los comentarios (fallback cuando no hay FeedbackController).
   List<EventComment> _comments = [];
 
   // Set para llevar un registro de los eventos que ha comentado el usuario actual
@@ -30,17 +34,26 @@ class EventController extends ChangeNotifier {
     _loadSubscribedEvents();
   }
 
+  // Setter para inyectar FeedbackController
+  void setFeedbackController(FeedbackController feedbackController) {
+    _feedbackController = feedbackController;
+  }
+
   // Getter para exponer los eventos de forma inmutable.
   List<Event> get events => List.unmodifiable(_events);
 
   // Getter para exponer todos los comentarios de forma inmutable.
-  List<EventComment> get comments => List.unmodifiable(_comments);
+  List<EventComment> get comments => 
+      _feedbackController?.eventComments ?? List.unmodifiable(_comments);
 
   // Getter para obtener IDs de eventos suscritos (solo lectura)
   Set<int> get subscribedEventIds => Set.unmodifiable(_subscribedEventIds);
 
   // Verifica si el usuario ya ha comentado en un evento específico
   bool hasUserCommentedEvent(int eventId, String userId) {
+    if (_feedbackController != null) {
+      return _feedbackController!.hasCommentedEvent(eventId);
+    }
     return _comments.any((comment) =>
         comment.eventId == eventId &&
         comment.userId == userId &&
@@ -49,6 +62,9 @@ class EventController extends ChangeNotifier {
 
   // Verifica si el usuario actual ha comentado en un evento (simplificado)
   bool hasCommentedEvent(int eventId) {
+    if (_feedbackController != null) {
+      return _feedbackController!.hasCommentedEvent(eventId);
+    }
     return _commentedEventIds.contains(eventId);
   }
 
@@ -69,6 +85,16 @@ class EventController extends ChangeNotifier {
         event.titulo.toLowerCase().contains('chocolate')
       ).toList();
       print("EventController: Found ${chocolateEvents.length} chocolate events");
+      
+      // Si tenemos FeedbackController, sincronizar feedbacks
+      if (_feedbackController != null) {
+        try {
+          await _feedbackController!.syncAllFeedbacks();
+          print("EventController: Synced feedbacks successfully");
+        } catch (e) {
+          print("EventController: Warning - could not sync feedbacks: $e");
+        }
+      }
       
       notifyListeners();
       print("EventController: notifyListeners called");
@@ -124,11 +150,18 @@ class EventController extends ChangeNotifier {
 
   /// Obtiene todos los comentarios de un evento específico.
   List<EventComment> getCommentsForEvent(int eventId) {
+    if (_feedbackController != null) {
+      return _feedbackController!.getCommentsForEvent(eventId);
+    }
     return _comments.where((comment) => comment.eventId == eventId).toList();
   }
 
   /// Calcula la calificación promedio de un evento
   double getAverageRatingForEvent(int eventId) {
+    if (_feedbackController != null) {
+      return _feedbackController!.getAverageRatingForEvent(eventId);
+    }
+    
     final eventComments = getCommentsForEvent(eventId);
     if (eventComments.isEmpty) {
       return 0.0;
@@ -288,41 +321,59 @@ class EventController extends ChangeNotifier {
     }
   }
 
-  /// Agrega un nuevo comentario a un evento.
-  void addComment({
+  /// Agrega un nuevo comentario a un evento (delegado al FeedbackController si está disponible).
+  Future<void> addComment({
     required int eventId,
     required String content,
     required int rating,
     required bool isAnonymous,
     String? userId,
-  }) {
-    // Generar un ID único para el comentario
-    final commentId = 'comment_${DateTime.now().millisecondsSinceEpoch}';
+  }) async {
+    if (_feedbackController != null) {
+      // Usar FeedbackController si está disponible
+      await _feedbackController!.addComment(
+        eventId: eventId,
+        content: content,
+        rating: rating,
+        isAnonymous: isAnonymous,
+        userId: userId,
+      );
+    } else {
+      // Fallback al sistema local
+      // Generar un ID único para el comentario
+      final commentId = 'comment_${DateTime.now().millisecondsSinceEpoch}';
 
-    // Crear el nuevo comentario
-    final newComment = EventComment(
-      id: commentId,
-      eventId: eventId,
-      content: content,
-      rating: rating,
-      datePosted: DateTime.now(),
-      isAnonymous: isAnonymous,
-      userId: isAnonymous ? null : userId,
-    );
+      // Crear el nuevo comentario
+      final newComment = EventComment(
+        id: commentId,
+        eventId: eventId,
+        content: content,
+        rating: rating,
+        datePosted: DateTime.now(),
+        isAnonymous: isAnonymous,
+        userId: isAnonymous ? null : userId,
+      );
 
-    // Agregar el comentario a la lista
-    _comments.add(newComment);
+      // Agregar el comentario a la lista
+      _comments.add(newComment);
 
-    // Registrar que este evento ha sido comentado
-    _commentedEventIds.add(eventId);
+      // Registrar que este evento ha sido comentado
+      _commentedEventIds.add(eventId);
 
-    // Notificar a los listeners sobre el cambio
-    notifyListeners();
+      // Notificar a los listeners sobre el cambio
+      notifyListeners();
+    }
   }
 
   /// Elimina un comentario específico.
-  void removeComment(String commentId) {
-    _comments.removeWhere((comment) => comment.id == commentId);
-    notifyListeners();
+  Future<void> removeComment(String commentId) async {
+    if (_feedbackController != null) {
+      // Usar FeedbackController si está disponible
+      await _feedbackController!.removeComment(commentId);
+    } else {
+      // Fallback al sistema local
+      _comments.removeWhere((comment) => comment.id == commentId);
+      notifyListeners();
+    }
   }
 }
