@@ -70,9 +70,9 @@ class EventRepository {
           // TODO: Fix Hive model compatibility later
           /*
           try {
-            // Save to local database
-            await _local.saveAllEvents(remoteEvents);
-            await _local.setLastUpdated(DateTime.now());
+          // Save to local database
+          await _local.saveAllEvents(remoteEvents);
+          await _local.setLastUpdated(DateTime.now());
             print("Events saved to local cache");
             logInfo("Saved ${remoteEvents.length} events to local cache");
           } catch (e) {

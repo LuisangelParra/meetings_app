@@ -21,6 +21,8 @@ import 'features/app/data/remote/remote_feedback_source.dart';
 import 'features/app/data/remote/i_remote_event_source.dart';
 import 'features/app/data/remote/i_remote_track_source.dart';
 import 'features/app/services/api_service.dart';
+import 'features/app/services/sync_service.dart';
+import 'utils/config/app_config.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -99,7 +101,7 @@ void main() async {
   );
 }
 
-// Wrapper para conectar FeedbackController al EventController después de la inicialización
+// Wrapper para conectar controladores e inicializar servicios
 class MyAppWrapper extends StatefulWidget {
   const MyAppWrapper({super.key});
 
@@ -107,16 +109,70 @@ class MyAppWrapper extends StatefulWidget {
   State<MyAppWrapper> createState() => _MyAppWrapperState();
 }
 
-class _MyAppWrapperState extends State<MyAppWrapper> {
+class _MyAppWrapperState extends State<MyAppWrapper> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    // Conectar FeedbackController al EventController después de que se construya el widget
+    WidgetsBinding.instance.addObserver(this);
+    
+    // Conectar controladores e inicializar servicios después de que se construya el widget
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final eventController = context.read<EventController>();
       final feedbackController = context.read<FeedbackController>();
+      final speakerController = context.read<SpeakerController>();
+      
+      // Conectar FeedbackController al EventController
       eventController.setFeedbackController(feedbackController);
+      
+      // Inicializar el servicio de sincronización
+      SyncService.instance.initialize(
+        eventController: eventController,
+        speakerController: speakerController,
+        feedbackController: feedbackController,
+      );
+      
+      // Iniciar sincronización automática si está habilitada
+      if (AppConfig.enableAutoSync) {
+        SyncService.instance.startAutoSync();
+      }
+      
+      print('SyncService initialized and started');
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    SyncService.instance.dispose();
+    super.dispose();
+  }
+  
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    switch (state) {
+      case AppLifecycleState.resumed:
+        // App volvió al foreground - sincronizar datos
+        print('App resumed - syncing data');
+        SyncService.instance.syncAll();
+        break;
+      case AppLifecycleState.paused:
+        // App pasó a background - cambiar a sync menos frecuente
+        print('App paused - slowing sync');
+        if (AppConfig.enableAutoSync) {
+          SyncService.instance.startAutoSync(
+            interval: SyncService.backgroundSyncInterval,
+          );
+        }
+        break;
+      case AppLifecycleState.detached:
+        // App siendo cerrada - detener sync
+        SyncService.instance.stopAutoSync();
+        break;
+      default:
+        break;
+    }
   }
 
   @override

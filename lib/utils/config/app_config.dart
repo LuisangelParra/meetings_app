@@ -24,6 +24,12 @@ class AppConfig {
   // Offline settings
   static const bool enableOfflineMode = true;
   static const Duration syncInterval = Duration(minutes: 15);
+  
+  // Auto-sync settings
+  static const bool enableAutoSync = true;
+  static const Duration autoSyncInterval = Duration(minutes: 5);
+  static const Duration backgroundSyncInterval = Duration(minutes: 15);
+  static const Duration onResumeDelay = Duration(seconds: 2);
 }
 
 /// Environment-specific configurations

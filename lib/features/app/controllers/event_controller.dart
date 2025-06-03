@@ -77,7 +77,7 @@ class EventController extends ChangeNotifier {
   Future<void> loadEvents() async {
     print("=== EventController.loadEvents() CALLED ===");
     try {
-      _events = await _eventRepository.loadEvents();
+    _events = await _eventRepository.loadEvents();
       print("EventController: Loaded ${_events.length} events");
       
       // Check specifically for chocolate event
@@ -96,7 +96,7 @@ class EventController extends ChangeNotifier {
         }
       }
       
-      notifyListeners();
+    notifyListeners();
       print("EventController: notifyListeners called");
     } catch (e) {
       print("EventController ERROR: $e");
@@ -203,10 +203,10 @@ class EventController extends ChangeNotifier {
     }
 
     try {
-      // Crear una copia actualizada del evento con un suscrito más
-      final updatedEvent = event.copyWith(
-        suscritos: event.suscritos + 1, // Incrementar el contador de suscritos
-      );
+    // Crear una copia actualizada del evento con un suscrito más
+    final updatedEvent = event.copyWith(
+      suscritos: event.suscritos + 1, // Incrementar el contador de suscritos
+    );
 
       print("Updating event in API: suscritos ${event.suscritos} -> ${updatedEvent.suscritos}");
       
@@ -217,18 +217,18 @@ class EventController extends ChangeNotifier {
         print("Successfully updated event in API");
         
         // Actualizar el evento en la lista local
-        _events[eventIndex] = updatedEvent;
+    _events[eventIndex] = updatedEvent;
 
-        // Agregar a la lista de suscritos
-        _subscribedEventIds.add(eventId);
+    // Agregar a la lista de suscritos
+    _subscribedEventIds.add(eventId);
 
-        // Persistir en almacenamiento local
-        _saveSubscribedEvents();
+    // Persistir en almacenamiento local
+    _saveSubscribedEvents();
 
-        // Notificar cambios
-        notifyListeners();
-        
-        return true;
+    // Notificar cambios
+    notifyListeners();
+
+    return true;
       } else {
         print("Failed to update event in API");
         return false;
@@ -257,15 +257,15 @@ class EventController extends ChangeNotifier {
     }
 
     try {
-      // Obtener el evento actual
-      final event = _events[eventIndex];
+    // Obtener el evento actual
+    final event = _events[eventIndex];
 
-      // Crear una copia actualizada del evento con un suscrito menos, pero nunca menos de 0
-      final updatedEvent = event.copyWith(
-        suscritos: event.suscritos > 0
-            ? event.suscritos - 1
-            : 0, // Decrementar el contador de suscritos
-      );
+    // Crear una copia actualizada del evento con un suscrito menos, pero nunca menos de 0
+    final updatedEvent = event.copyWith(
+      suscritos: event.suscritos > 0
+          ? event.suscritos - 1
+          : 0, // Decrementar el contador de suscritos
+    );
 
       print("Updating event in API: suscritos ${event.suscritos} -> ${updatedEvent.suscritos}");
       
@@ -276,18 +276,18 @@ class EventController extends ChangeNotifier {
         print("Successfully updated event in API");
         
         // Actualizar el evento en la lista local
-        _events[eventIndex] = updatedEvent;
+    _events[eventIndex] = updatedEvent;
 
-        // Remover de la lista de suscritos
-        _subscribedEventIds.remove(eventId);
+    // Remover de la lista de suscritos
+    _subscribedEventIds.remove(eventId);
 
-        // Persistir en almacenamiento local
-        _saveSubscribedEvents();
+    // Persistir en almacenamiento local
+    _saveSubscribedEvents();
 
-        // Notificar cambios
-        notifyListeners();
-        
-        return true;
+    // Notificar cambios
+    notifyListeners();
+
+    return true;
       } else {
         print("Failed to update event in API");
         return false;
@@ -340,28 +340,28 @@ class EventController extends ChangeNotifier {
       );
     } else {
       // Fallback al sistema local
-      // Generar un ID único para el comentario
-      final commentId = 'comment_${DateTime.now().millisecondsSinceEpoch}';
+    // Generar un ID único para el comentario
+    final commentId = 'comment_${DateTime.now().millisecondsSinceEpoch}';
 
-      // Crear el nuevo comentario
-      final newComment = EventComment(
-        id: commentId,
-        eventId: eventId,
-        content: content,
-        rating: rating,
-        datePosted: DateTime.now(),
-        isAnonymous: isAnonymous,
-        userId: isAnonymous ? null : userId,
-      );
+    // Crear el nuevo comentario
+    final newComment = EventComment(
+      id: commentId,
+      eventId: eventId,
+      content: content,
+      rating: rating,
+      datePosted: DateTime.now(),
+      isAnonymous: isAnonymous,
+      userId: isAnonymous ? null : userId,
+    );
 
-      // Agregar el comentario a la lista
-      _comments.add(newComment);
+    // Agregar el comentario a la lista
+    _comments.add(newComment);
 
-      // Registrar que este evento ha sido comentado
-      _commentedEventIds.add(eventId);
+    // Registrar que este evento ha sido comentado
+    _commentedEventIds.add(eventId);
 
-      // Notificar a los listeners sobre el cambio
-      notifyListeners();
+    // Notificar a los listeners sobre el cambio
+    notifyListeners();
     }
   }
 
@@ -372,8 +372,8 @@ class EventController extends ChangeNotifier {
       await _feedbackController!.removeComment(commentId);
     } else {
       // Fallback al sistema local
-      _comments.removeWhere((comment) => comment.id == commentId);
-      notifyListeners();
+    _comments.removeWhere((comment) => comment.id == commentId);
+    notifyListeners();
     }
   }
 }

@@ -74,22 +74,22 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
           loggy.debug('Successfully parsed event: ${eventWithEntryId.titulo} (ID: ${eventWithEntryId.id}, EntryID: ${eventWithEntryId.entryId})');
 
           // Find main speaker (using ponente_id if available)
-          Speaker? mainSpeaker;
+        Speaker? mainSpeaker;
           if (eventWithEntryId.ponenteId != null) {
-            try {
-              for (final speaker in speakers) {
+          try {
+            for (final speaker in speakers) {
                 if (speaker.id != null && speaker.id == eventWithEntryId.ponenteId) {
-                  mainSpeaker = speaker;
-                  break;
-                }
+                mainSpeaker = speaker;
+                break;
               }
+            }
               if (mainSpeaker == null) {
                 loggy.debug('Main speaker with ID ${eventWithEntryId.ponenteId} not found for event ${eventWithEntryId.titulo}');
               }
-            } catch (e) {
+          } catch (e) {
               loggy.debug('Error finding main speaker: $e');
-            }
           }
+        }
 
           // Find all speakers for this event using event_speakers table
           final eventSpeakerIds = <int>[];
@@ -116,10 +116,10 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
 
           loggy.debug('Event ${eventWithEntryId.titulo} (ID: ${eventWithEntryId.id}) has speaker IDs: $eventSpeakerIds');
 
-          final allEventSpeakers = <Speaker>[];
-          for (final speaker in speakers) {
-            if (speaker.id != null && eventSpeakerIds.contains(speaker.id!)) {
-              allEventSpeakers.add(speaker);
+        final allEventSpeakers = <Speaker>[];
+        for (final speaker in speakers) {
+          if (speaker.id != null && eventSpeakerIds.contains(speaker.id!)) {
+            allEventSpeakers.add(speaker);
               loggy.debug('Added speaker ${speaker.name} (ID: ${speaker.id}) to event ${eventWithEntryId.titulo}');
             }
           }
@@ -140,12 +140,12 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
             }
           }
 
-          final trackNames = <String>[];
-          for (final track in tracks) {
-            if (track.id != null && eventTrackIds.contains(track.id!)) {
-              trackNames.add(track.nombre);
-            }
+        final trackNames = <String>[];
+        for (final track in tracks) {
+          if (track.id != null && eventTrackIds.contains(track.id!)) {
+            trackNames.add(track.nombre);
           }
+        }
 
           // Combine speakers from relationships with embedded speakers
           final combinedSpeakers = <Speaker>[...allEventSpeakers];
@@ -172,14 +172,14 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
           
           loggy.debug('Combined speakers for event ${eventWithEntryId.titulo}: ${combinedSpeakers.map((s) => s.name).join(", ")}');
 
-          // Create enriched event
+        // Create enriched event
           final enrichedEvent = eventWithEntryId.copyWith(
-            ponente: mainSpeaker,
+          ponente: mainSpeaker,
             speakers: combinedSpeakers,
-            trackNames: trackNames,
-          );
+          trackNames: trackNames,
+        );
 
-          events.add(enrichedEvent);
+        events.add(enrichedEvent);
         } catch (e) {
           loggy.error('Error parsing individual event: $e');
           loggy.error('Event data that failed: $eventData');
