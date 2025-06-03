@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:meetings_app/app.dart';
 import 'package:meetings_app/features/app/controllers/event_controller.dart';
 import 'package:meetings_app/features/app/controllers/feedback_controller.dart';
+import 'package:meetings_app/features/app/controllers/speaker_controller.dart';
 import 'package:meetings_app/features/app/controllers/calendar_controller.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:loggy/loggy.dart';
@@ -64,7 +65,9 @@ void main() async {
         ProxyProvider<IRemoteTrackSource, TrackRepository>(
           update: (_, remote, __) => TrackRepository(remote: remote),
         ),
-        Provider<SpeakerRepository>(create: (_) => SpeakerRepository()),
+        ProxyProvider<RemoteSpeakerSource, SpeakerRepository>(
+          update: (_, remote, __) => SpeakerRepository(remote: remote),
+        ),
         ProxyProvider<RemoteFeedbackSource, FeedbackRepository>(
           update: (_, remote, __) => FeedbackRepository(remote: remote),
         ),
@@ -79,6 +82,14 @@ void main() async {
           ),
           update: (_, repository, previous) => previous ?? FeedbackController(
             feedbackRepository: repository,
+          ),
+        ),
+        ChangeNotifierProxyProvider<SpeakerRepository, SpeakerController>(
+          create: (context) => SpeakerController(
+            speakerRepository: context.read<SpeakerRepository>(),
+          ),
+          update: (_, repository, previous) => previous ?? SpeakerController(
+            speakerRepository: repository,
           ),
         ),
         ChangeNotifierProvider(create: (_) => CalendarController()),

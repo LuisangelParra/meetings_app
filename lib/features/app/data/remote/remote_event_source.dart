@@ -73,7 +73,7 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
           
           loggy.debug('Successfully parsed event: ${eventWithEntryId.titulo} (ID: ${eventWithEntryId.id}, EntryID: ${eventWithEntryId.entryId})');
 
-          // Find main speaker
+          // Find main speaker (using ponente_id if available)
           Speaker? mainSpeaker;
           if (eventWithEntryId.ponenteId != null) {
             try {
@@ -83,16 +83,27 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
                   break;
                 }
               }
-              mainSpeaker ??= Speaker(name: 'Ponente no encontrado');
+              if (mainSpeaker == null) {
+                loggy.debug('Main speaker with ID ${eventWithEntryId.ponenteId} not found for event ${eventWithEntryId.titulo}');
+              }
             } catch (e) {
-              mainSpeaker = Speaker(name: 'Ponente no encontrado');
+              loggy.debug('Error finding main speaker: $e');
             }
           }
 
-          // Find all speakers for this event - use safe parsing
+          // Find all speakers for this event using event_speakers table
           final eventSpeakerIds = <int>[];
           for (final es in eventSpeakers) {
-            if (es['event_id'] == eventWithEntryId.id) {
+            // Convert both event_id and eventWithEntryId.id to int for comparison
+            final esEventId = es['event_id'];
+            int? relationEventId;
+            if (esEventId is int) {
+              relationEventId = esEventId;
+            } else if (esEventId is String) {
+              relationEventId = int.tryParse(esEventId);
+            }
+            
+            if (relationEventId != null && relationEventId == eventWithEntryId.id) {
               final speakerId = es['speaker_id'];
               if (speakerId is int) {
                 eventSpeakerIds.add(speakerId);
@@ -103,12 +114,17 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
             }
           }
 
+          loggy.debug('Event ${eventWithEntryId.titulo} (ID: ${eventWithEntryId.id}) has speaker IDs: $eventSpeakerIds');
+
           final allEventSpeakers = <Speaker>[];
           for (final speaker in speakers) {
             if (speaker.id != null && eventSpeakerIds.contains(speaker.id!)) {
               allEventSpeakers.add(speaker);
+              loggy.debug('Added speaker ${speaker.name} (ID: ${speaker.id}) to event ${eventWithEntryId.titulo}');
             }
           }
+          
+          loggy.debug('Final speakers for event ${eventWithEntryId.titulo}: ${allEventSpeakers.map((s) => s.name).join(", ")}');
 
           // Find track names for this event - use safe parsing
           final eventTrackIds = <int>[];
@@ -131,10 +147,35 @@ class RemoteEventSource with UiLoggy implements IRemoteEventSource {
             }
           }
 
+          // Combine speakers from relationships with embedded speakers
+          final combinedSpeakers = <Speaker>[...allEventSpeakers];
+          
+          // Add speakers from embedded fields (ponente and invitados_especiales)
+          if (eventWithEntryId.ponenteNombre != null && eventWithEntryId.ponenteNombre!.isNotEmpty) {
+            final embeddedPonente = Speaker(
+              name: eventWithEntryId.ponenteNombre!,
+            );
+            combinedSpeakers.add(embeddedPonente);
+            // Also set as main speaker if no relationship-based speaker was found
+            mainSpeaker ??= embeddedPonente;
+          }
+          
+          // Add invitados especiales
+          for (final invitado in eventWithEntryId.invitadosEspeciales) {
+            if (invitado.isNotEmpty) {
+              final embeddedSpeaker = Speaker(
+                name: invitado,
+              );
+              combinedSpeakers.add(embeddedSpeaker);
+            }
+          }
+          
+          loggy.debug('Combined speakers for event ${eventWithEntryId.titulo}: ${combinedSpeakers.map((s) => s.name).join(", ")}');
+
           // Create enriched event
           final enrichedEvent = eventWithEntryId.copyWith(
             ponente: mainSpeaker,
-            speakers: allEventSpeakers,
+            speakers: combinedSpeakers,
             trackNames: trackNames,
           );
 

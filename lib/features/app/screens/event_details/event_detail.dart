@@ -383,40 +383,110 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                       ),
                                 ),
                                 const SizedBox(height: LSizes.md),
-                                Text(
-                                  'Invitados especiales',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: dark
-                                            ? LColors.textWhite
-                                            : LColors.dark,
+                                
+                                // Speaker principal
+                                if (widget.event.ponente != null || widget.event.ponenteNombre != null)
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Speaker Principal',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: dark
+                                                  ? LColors.textWhite
+                                                  : LColors.dark,
+                                            ),
                                       ),
-                                ),
-                                const SizedBox(height: 8),
-                                if (widget.event.speakers.isNotEmpty)
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 4,
-                                    children: widget.event.speakers
-                                        .map((speaker) =>
-                                            TrackChip(context, speaker.name))
-                                        .toList(),
-                                  )
-                                else
-                                  Text(
-                                    'No additional speakers',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: dark
-                                              ? LColors.textWhite
-                                              : LColors.darkGrey,
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: LColors.primary.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: LColors.primary.withOpacity(0.3),
+                                          ),
                                         ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.person_pin,
+                                              color: LColors.primary,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              widget.event.ponente?.name ?? 
+                                              widget.event.ponenteNombre ?? 
+                                              'No especificado',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                    color: LColors.primary,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: LSizes.md),
+                                    ],
                                   ),
+                                
+                                // Invitados especiales (excluir speaker principal)
+                                Builder(
+                                  builder: (context) {
+                                    final mainSpeakerName = widget.event.ponente?.name ?? widget.event.ponenteNombre;
+                                    final guestSpeakers = widget.event.speakers
+                                        .where((speaker) => speaker.name != mainSpeakerName)
+                                        .toList();
+                                    
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Invitados especiales',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: dark
+                                                    ? LColors.textWhite
+                                                    : LColors.dark,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        if (guestSpeakers.isNotEmpty)
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 4,
+                                            children: guestSpeakers
+                                                .map((speaker) =>
+                                                    TrackChip(context, speaker.name))
+                                                .toList(),
+                                          )
+                                        else
+                                          Text(
+                                            'No hay invitados especiales',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: dark
+                                                      ? LColors.textWhite
+                                                      : LColors.darkGrey,
+                                                ),
+                                          ),
+                                      ],
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                           ),

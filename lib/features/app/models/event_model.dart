@@ -7,6 +7,8 @@ class Event {
   final String descripcion;
   final String tema;
   final int? ponenteId; // Foreign key to speakers table
+  final String? ponenteNombre; // Speaker name directly from event data
+  final List<String> invitadosEspeciales; // Guest speakers names directly from event data
   final DateTime fecha;
   final String horaInicio;
   final String horaFin;
@@ -26,6 +28,8 @@ class Event {
     required this.descripcion,
     required this.tema,
     this.ponenteId,
+    this.ponenteNombre,
+    this.invitadosEspeciales = const [],
     required this.fecha,
     required this.horaInicio,
     required this.horaFin,
@@ -39,6 +43,16 @@ class Event {
 
   /// Create an Event from API JSON
   factory Event.fromJson(Map<String, dynamic> json) {
+    // Parse invitados_especiales array
+    List<String> invitados = [];
+    if (json['invitados_especiales'] != null) {
+      if (json['invitados_especiales'] is List) {
+        invitados = (json['invitados_especiales'] as List)
+            .map((item) => item.toString())
+            .toList();
+      }
+    }
+    
     return Event(
       id: _parseIntSafely(json['id']),
       entryId: _parseIntSafely(json['entry_id']),
@@ -46,6 +60,8 @@ class Event {
       descripcion: json['descripcion'] as String? ?? 'Sin descripción',
       tema: json['tema'] as String? ?? 'Sin tema',
       ponenteId: _parseIntSafely(json['ponente_id']),
+      ponenteNombre: json['ponente'] as String?,
+      invitadosEspeciales: invitados,
       fecha: DateTime.parse(json['fecha'] as String),
       horaInicio: json['hora_inicio'] as String? ?? '',
       horaFin: json['hora_fin'] as String? ?? '',
@@ -107,6 +123,8 @@ class Event {
     String? descripcion,
     String? tema,
     int? ponenteId,
+    String? ponenteNombre,
+    List<String>? invitadosEspeciales,
     DateTime? fecha,
     String? horaInicio,
     String? horaFin,
@@ -124,6 +142,8 @@ class Event {
       descripcion: descripcion ?? this.descripcion,
       tema: tema ?? this.tema,
       ponenteId: ponenteId ?? this.ponenteId,
+      ponenteNombre: ponenteNombre ?? this.ponenteNombre,
+      invitadosEspeciales: invitadosEspeciales ?? this.invitadosEspeciales,
       fecha: fecha ?? this.fecha,
       horaInicio: horaInicio ?? this.horaInicio,
       horaFin: horaFin ?? this.horaFin,
